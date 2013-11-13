@@ -10,8 +10,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import name.iparraga.model.MainClass;
-
 import org.testng.annotations.Test;
 
 public class MainClassTest {
@@ -21,9 +19,24 @@ public class MainClassTest {
 		String className = "Test";
 		MainClass emptyClass = new MainClass(package_, className);
 
-		String expectedCode = readFile("GenerateEmptyClass.java");
+		String expectedCode = readFile("EmptyClass.java");
 		String actualCode = emptyClass.toCode();
 
+		assertEquals(actualCode, expectedCode);
+	}
+
+	@Test
+	public void generateClassWithComments() throws IOException {
+		String package_ = "com.test";
+		String className = "Test";
+
+		MainClass emptyClass = new MainClass(package_, className);
+		emptyClass.add(new Comment("/**\n * Comment before\n */"));
+		emptyClass.add(new Import("java.util.*"));
+		emptyClass.add(new Comment("/**\n * Class comment\n */"));
+
+		String expectedCode = readFile("ClassWithComments.java");
+		String actualCode = emptyClass.toCode();
 		assertEquals(actualCode, expectedCode);
 	}
 
