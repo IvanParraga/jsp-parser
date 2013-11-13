@@ -9,7 +9,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<powermock.version>1.5.1</powermock.version>
+		<antlr.version>4.1</antlr.version>
 	</properties>
 
 	<build>
@@ -17,7 +17,7 @@
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.0</version>
+				<version>${antlr.version}</version>
 				<configuration>
 					<sourceDirectory>src/main/resources</sourceDirectory>
 				</configuration>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
-			<version>4.1</version>
+			<version>${antlr.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

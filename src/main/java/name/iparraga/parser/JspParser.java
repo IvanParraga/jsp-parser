@@ -42,7 +42,8 @@ public class JspParser implements ANTLRErrorListener {
 			jspparserParser parser = new jspparserParser(new BufferedTokenStream(
 					lexer));
 			parser.addErrorListener(this);
-			parser.script();
+			parser.jspFile();
+			logger.debug(parser.helper.getMainClass().toCode());
 
 			if (hasErrors()) {
 				logger.info(Arrays.toString(errors.toArray()));
