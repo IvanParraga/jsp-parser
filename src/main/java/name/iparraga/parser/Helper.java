@@ -11,12 +11,20 @@ public class Helper {
 	private final MainClass class_;
 
 	public Helper() {
-		class_ = new MainClass("foo","foo");
+		class_ = new MainClass("foo","foo","foo");
 	}
 
 	public void addComment(String comment) {
 		logger.debug("adding comment " + comment);
 		class_.add(new Comment(comment));
+	}
+
+	public void addImport(String import_) {
+		logger.debug("adding import " + import_);
+	}
+
+	public void debug(String msg) {
+		logger.debug("-------------> " + msg);
 	}
 
 	public MainClass getMainClass() {

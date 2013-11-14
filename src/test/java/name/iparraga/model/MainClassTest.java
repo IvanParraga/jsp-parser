@@ -16,10 +16,12 @@ public class MainClassTest {
 	@Test
 	public void generateEmptyClass() throws IOException {
 		String package_ = "com.test";
-		String className = "Test";
-		MainClass emptyClass = new MainClass(package_, className);
+		String className = "EmptyClass";
+		String source = "/test.jsp";
 
-		String expectedCode = readFile("EmptyClass.java");
+		MainClass emptyClass = new MainClass(package_, className, source);
+
+		String expectedCode = readClassFile(className);
 		String actualCode = emptyClass.toCode();
 
 		assertEquals(actualCode, expectedCode);
@@ -28,20 +30,21 @@ public class MainClassTest {
 	@Test
 	public void generateClassWithComments() throws IOException {
 		String package_ = "com.test";
-		String className = "Test";
+		String className = "ClassWithComments";
+		String source = "/test.jsp";
 
-		MainClass emptyClass = new MainClass(package_, className);
+		MainClass emptyClass = new MainClass(package_, className, source);
 		emptyClass.add(new Comment("/**\n * Comment before\n */"));
 		emptyClass.add(new Import("java.util.*"));
 		emptyClass.add(new Comment("/**\n * Class comment\n */"));
 
-		String expectedCode = readFile("ClassWithComments.java");
+		String expectedCode = readClassFile(className);
 		String actualCode = emptyClass.toCode();
 		assertEquals(actualCode, expectedCode);
 	}
 
-	private String readFile(String file) throws IOException {
-		URI path = getPath(file);
+	private String readClassFile(String className) throws IOException {
+		URI path = getPath(className + ".java");
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return Charset.forName("UTF8").decode(ByteBuffer.wrap(encoded)).toString();
 	}

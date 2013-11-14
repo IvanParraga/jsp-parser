@@ -1,5 +1,7 @@
 package name.iparraga.parser;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
@@ -26,8 +28,8 @@ public class JspParser implements ANTLRErrorListener {
 
 	private final Reader input;
 
-	public JspParser(Reader input) {
-		this.input = input;
+	public JspParser(String filePath) throws FileNotFoundException {
+		input = new FileReader(filePath);
 	}
 
 	public void reportError(RecognitionException e) {
@@ -46,7 +48,7 @@ public class JspParser implements ANTLRErrorListener {
 			logger.debug(parser.helper.getMainClass().toCode());
 
 			if (hasErrors()) {
-				logger.info(Arrays.toString(errors.toArray()));
+				logger.info("Errors!!!\n" + Arrays.toString(errors.toArray()));
 			}
 
 		} catch (IOException e) {
