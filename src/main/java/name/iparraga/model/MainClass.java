@@ -20,10 +20,10 @@ public class MainClass {
 
 	private StringBuilder code;
 
-	public MainClass(String package_, String className, String source) {
+	public MainClass(String package_, String className, String sourceJsp) {
 		this.package_ = package_;
 		this.className = className;
-		this.source = source;
+		this.source = sourceJsp;
 	}
 
 	public String toCode() {
@@ -87,5 +87,26 @@ public class MainClass {
 
 	public void add(ClassToken token) {
 		tokens.add(token);
+	}
+
+	@Override
+	public int hashCode() {
+		return toCode().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MainClass other = (MainClass) obj;
+
+		String thisCode = toCode();
+		String otherCode = other.toCode();
+
+		return thisCode.equals(otherCode);
 	}
 }

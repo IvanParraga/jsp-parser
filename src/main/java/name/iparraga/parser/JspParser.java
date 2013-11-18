@@ -9,6 +9,8 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import name.iparraga.model.MainClass;
+
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
@@ -36,7 +38,7 @@ public class JspParser implements ANTLRErrorListener {
 		errors.add(e);
 	}
 
-	public void run() {
+	public MainClass run() {
 		ANTLRInputStream antlrStream;
 		try {
 			antlrStream = new ANTLRInputStream(input);
@@ -45,12 +47,15 @@ public class JspParser implements ANTLRErrorListener {
 					lexer));
 			parser.addErrorListener(this);
 			parser.jspFile();
+
 			logger.debug(parser.helper.getMainClass().toCode());
 
 			if (hasErrors()) {
-				logger.info("Errors!!!\n" + Arrays.toString(errors.toArray()));
+				throw new RuntimeException(
+					"Problems parsing! " + Arrays.toString(errors.toArray()));
 			}
 
+			return parser.helper.getMainClass();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -71,7 +76,6 @@ public class JspParser implements ANTLRErrorListener {
 	public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex,
 			int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -79,13 +83,11 @@ public class JspParser implements ANTLRErrorListener {
 			int startIndex, int stopIndex, BitSet conflictingAlts,
 			ATNConfigSet configs) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void reportContextSensitivity(Parser recognizer, DFA dfa,
 			int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
 		// TODO Auto-generated method stub
-
 	}
 }
