@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainClass {
-	List<ClassToken> tokens = new LinkedList<>();
+	private final List<ClassToken> tokens = new LinkedList<>();
+
+	private final List<Import> imports = new LinkedList<Import>();
 
 	private static final String STANDARD_IMPORTS =
 		"import java.io.IOException;\n" +
@@ -30,6 +32,7 @@ public class MainClass {
 		code = new StringBuilder();
 		writePackage();
 		writeStandardImports();
+		writeAddedImports();
 		writeCodeFromTokens();
 		writeTags();
 		writeClassBody();
@@ -46,6 +49,12 @@ public class MainClass {
 
 	private void writeStandardImports() {
 		code.append(STANDARD_IMPORTS);
+	}
+
+	private void writeAddedImports() {
+		for (Import import_ : imports) {
+			import_.toCode(code);
+		}
 	}
 
 	private void writeCodeFromTokens() {
@@ -87,6 +96,10 @@ public class MainClass {
 
 	public void add(ClassToken token) {
 		tokens.add(token);
+	}
+
+	public void addImport(Import import_) {
+		imports.add(import_);
 	}
 
 	@Override

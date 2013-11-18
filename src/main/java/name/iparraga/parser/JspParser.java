@@ -4,9 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import name.iparraga.model.MainClass;
@@ -26,16 +26,12 @@ import org.slf4j.LoggerFactory;
 public class JspParser implements ANTLRErrorListener {
 	private static Logger logger = LoggerFactory.getLogger(JspParser.class);
 
-	private final List<RecognitionException> errors = new LinkedList<>();
+	private final List<SyntacticProblem> errors = new ArrayList<>();
 
 	private final Reader input;
 
 	public JspParser(String filePath) throws FileNotFoundException {
 		input = new FileReader(filePath);
-	}
-
-	public void reportError(RecognitionException e) {
-		errors.add(e);
 	}
 
 	public MainClass run() {
@@ -69,7 +65,7 @@ public class JspParser implements ANTLRErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer,
 			Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
-		errors.add(e);
+		errors.add(new SyntacticProblem(line, charPositionInLine, msg));
 	}
 
 	@Override
@@ -89,5 +85,23 @@ public class JspParser implements ANTLRErrorListener {
 	public void reportContextSensitivity(Parser recognizer, DFA dfa,
 			int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
 		// TODO Auto-generated method stub
+	}
+
+	private static class SyntacticProblem {
+		int line;
+		int charPositionInLine;
+		String msg;
+
+		public SyntacticProblem(int line, int charPositionInLine, String msg) {
+			this.line = line;
+			this.charPositionInLine = charPositionInLine;
+			this.msg = msg;
+		}
+
+		@Override
+		public String toString() {
+			return "SyntacticProblem [line=" + line + ", charPositionInLine="
+					+ charPositionInLine + ", msg=" + msg + "]";
+		}
 	}
 }

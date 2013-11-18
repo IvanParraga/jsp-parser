@@ -1,6 +1,7 @@
 package name.iparraga.parser;
 
 import name.iparraga.model.Comment;
+import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class Helper {
 
 	public void addImport(String import_) {
 		logger.debug("adding import " + import_);
+		class_.addImport(new Import(import_));
 	}
 
 	public void debug(String msg) {
