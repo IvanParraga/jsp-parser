@@ -44,8 +44,6 @@ public class JspParser implements ANTLRErrorListener {
 			parser.addErrorListener(this);
 			parser.jspFile();
 
-			logger.debug(parser.helper.getMainClass().toCode());
-
 			if (hasErrors()) {
 				throw new RuntimeException(
 					"Problems parsing! " + Arrays.toString(errors.toArray()));
@@ -103,5 +101,11 @@ public class JspParser implements ANTLRErrorListener {
 			return "SyntacticProblem [line=" + line + ", charPositionInLine="
 					+ charPositionInLine + ", msg=" + msg + "]";
 		}
+	}
+
+	public static void main(String[] args) throws FileNotFoundException {
+		JspParser parser = new JspParser(args[0]);
+		MainClass class_ = parser.run();
+		System.out.print(class_.toCode());
 	}
 }
