@@ -14,6 +14,10 @@ directive : importDirective | otherDirective;
 importDirective : importOpen '"' importDeclaration '"' (WS|ANY)* DIRECTIVE_CLOSE WS?
 	{helper.addImport($importDeclaration.text);} 
 	;
+	
+otherDirective : DIRECTIVE_OPEN (WS|ANY)* DIRECTIVE_CLOSE;
+
+other : ANY*;
 
 otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE;
 
