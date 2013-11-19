@@ -5,26 +5,31 @@ Helper helper = new Helper();
 }
 
 jspFile : 
-	(directive) * EOF 
+	(directive | scriptlet)* WS? EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
-directive : importDirective | otherDirective;
+directive 
+	: importDirective 
+	| otherDirective
+	{helper.debug("match directive" + $directive.text);}
+	;
 
 importDirective : importOpen '"' importDeclaration '"' (WS|ANY)* DIRECTIVE_CLOSE WS?
 	{helper.addImport($importDeclaration.text);} 
 	;
 	
-otherDirective : DIRECTIVE_OPEN (WS|ANY)* DIRECTIVE_CLOSE;
-
-other : ANY*;
-
 otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE;
 
 importOpen : DIRECTIVE_OPEN WS? 'page' WS 'import' WS? '=' WS?;
 importDeclaration
     :   'static'? qualifiedName ('.' '*')?
     ; 
+
+scriptlet 
+	: SCRIPTLET_OPEN code=.*? DIRECTIVE_CLOSE
+	{helper.addCode($scriptlet.text);}
+	;
 
 qualifiedName
     :   Identifier ('.' Identifier)*
@@ -58,5 +63,6 @@ JavaLetterOrDigit
 
 DIRECTIVE_OPEN : '<%@'; 
 DIRECTIVE_CLOSE : '%>';
+SCRIPTLET_OPEN : '<%'; 
 WS  :  [ \t\r\n\u000C]+;
 ANY : .;

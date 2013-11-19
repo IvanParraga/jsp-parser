@@ -28,18 +28,16 @@ public class MainClassTest {
 	}
 
 	@Test
-	public void generateClassWithComments() throws IOException {
+	public void generateCodeClass() throws IOException {
 		String package_ = "com.test";
-		String className = "ClassWithComments";
+		String className = "CodeClass";
 		String source = "/test.jsp";
 
-		MainClass emptyClass = new MainClass(package_, className, source);
-		emptyClass.add(new Comment("/**\n * Comment before\n */"));
-		emptyClass.add(new Import("java.util.*"));
-		emptyClass.add(new Comment("/**\n * Class comment\n */"));
+		MainClass codeClass = new MainClass(package_, className, source);
+		codeClass.addCode(new Code("	// some intereting code"));
+		String actualCode = codeClass.toCode();
 
 		String expectedCode = readClassFile(className);
-		String actualCode = emptyClass.toCode();
 		assertEquals(actualCode, expectedCode);
 	}
 

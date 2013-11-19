@@ -6,7 +6,9 @@ import java.util.List;
 public class MainClass {
 	private final List<ClassToken> tokens = new LinkedList<>();
 
-	private final List<Import> imports = new LinkedList<Import>();
+	private final List<Import> imports = new LinkedList<>();
+
+	private final List<Code> codes = new LinkedList<>();
 
 	private static final String STANDARD_IMPORTS =
 		"import java.io.IOException;\n" +
@@ -21,6 +23,8 @@ public class MainClass {
 	private final String source;
 
 	private StringBuilder code;
+
+
 
 	public MainClass(String package_, String className, String sourceJsp) {
 		this.package_ = package_;
@@ -83,9 +87,24 @@ public class MainClass {
 	}
 
 	private void writeDoRunMethod() {
+		writeDoRunMethodBegining();
+		writeCodes();
+		writeDoRunMethodEnding();
+	}
+
+	private void writeDoRunMethodBegining() {
 		code.append("\t@GET\n");
 		code.append("\tpublic String doRun() throws IOException {\n");
 		code.append("\t\tWriter out = new StringWriter();\n");
+	}
+
+	private void writeCodes() {
+		for (ClassToken token : codes) {
+			token.toCode(code);
+		}
+	}
+
+	private void writeDoRunMethodEnding() {
 		code.append("\t\treturn out.toString();\n");
 		code.append("\t}\n");
 	}
@@ -121,5 +140,9 @@ public class MainClass {
 		String otherCode = other.toCode();
 
 		return thisCode.equals(otherCode);
+	}
+
+	public void addCode(Code code) {
+		codes.add(code);
 	}
 }

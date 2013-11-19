@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 
+import name.iparraga.model.Code;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 
@@ -25,8 +26,8 @@ public class JspParserTest {
 		MainClass actualMainClass = parser.run();
 
 		MainClass expectedMainClass = new MainClass("foo", "foo", "foo");
-		expectedMainClass.add(new Import("java.rmi.NoSuchObjectException"));
-		expectedMainClass.add(new Import("java.lang.Exception"));
+		expectedMainClass.addImport(new Import("java.rmi.NoSuchObjectException"));
+		expectedMainClass.addImport(new Import("java.lang.Exception"));
 		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
 	}
 
@@ -38,6 +39,19 @@ public class JspParserTest {
 		MainClass actualMainClass = parser.run();
 
 		MainClass expectedMainClass = new MainClass("foo", "foo", "foo");
+		expectedMainClass.addImport(new Import("java.rmi.NoSuchObjectException"));
+		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
+	}
+
+	@Test
+	public void scriptlet() throws FileNotFoundException {
+		String path = getPath("Scriptlet.jsp");
+		JspParser parser = new JspParser(path);
+
+		MainClass actualMainClass = parser.run();
+
+		MainClass expectedMainClass = new MainClass("foo", "foo", "foo");
+		expectedMainClass.addCode(new Code("// some intereting code"));
 		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
 	}
 
