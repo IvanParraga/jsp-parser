@@ -5,13 +5,17 @@ Helper helper = new Helper();
 }
 
 jspFile : 
-	importDirective* EOF 
+	(directive) * EOF 
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
+
+directive : importDirective | otherDirective;
 
 importDirective : importOpen '"' importDeclaration '"' (WS|ANY)* DIRECTIVE_CLOSE WS?
 	{helper.addImport($importDeclaration.text);} 
 	;
+
+otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE;
 
 importOpen : DIRECTIVE_OPEN WS? 'page' WS 'import' WS? '=' WS?;
 importDeclaration
