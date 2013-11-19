@@ -5,8 +5,6 @@ Helper helper = new Helper();
 }
 
 
-	
-
 options { 
 	output = AST;
 	rewrite = true;

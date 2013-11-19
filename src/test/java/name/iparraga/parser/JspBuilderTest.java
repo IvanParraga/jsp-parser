@@ -7,9 +7,10 @@ import java.io.FileNotFoundException;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 
+import org.antlr.runtime.RecognitionException;
 import org.testng.annotations.Test;
 
-public class JspParserTest {
+public class JspBuilderTest {
 //	@Test
 //	public void run() throws FileNotFoundException {
 //		String path = getPath("campanya_add_dominio_run.jsp");
@@ -18,9 +19,9 @@ public class JspParserTest {
 //	}
 
 	@Test
-	public void recognizeImportDirective() throws FileNotFoundException {
+	public void recognizeImportDirective() throws FileNotFoundException, RecognitionException {
 		String path = getPath("LanguageDirective.jsp");
-		JspParser parser = new JspParser(path);
+		JspBuilder parser = new JspBuilder(path);
 
 		MainClass actualMainClass = parser.run();
 
@@ -31,9 +32,9 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void ignoreOtherDirectives() throws FileNotFoundException {
+	public void ignoreOtherDirectives() throws FileNotFoundException, RecognitionException {
 		String path = getPath("OtherDirectives.jsp");
-		JspParser parser = new JspParser(path);
+		JspBuilder parser = new JspBuilder(path);
 
 		MainClass actualMainClass = parser.run();
 

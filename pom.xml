@@ -19,9 +19,16 @@
 				<artifactId>antlr3-maven-plugin</artifactId>
 				<version>${antlr.version}</version>
 				<configuration>
-					<sourceDirectory>src/main/resources</sourceDirectory>
+					<outputDirectory>${basedir}/target/generated-sources/antlr3/name/iparraga/parser</outputDirectory>
 				</configuration>
-			</plugin>			
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -58,7 +65,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.antlr</groupId>
-			<artifactId>antlr</artifactId>
+			<artifactId>antlr-runtime</artifactId>
 			<version>${antlr.version}</version>
 		</dependency>
 		<dependency>
