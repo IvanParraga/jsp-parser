@@ -11,12 +11,12 @@ import name.iparraga.model.MainClass;
 import org.testng.annotations.Test;
 
 public class JspParserTest {
-//	@Test
-//	public void run() throws FileNotFoundException {
-//		String path = getPath("campanya_add_dominio_run.jsp");
-//		JspParser parser = new JspParser(path);
-//		parser.run();
-//	}
+	@Test
+	public void run() throws FileNotFoundException {
+		String path = getPath("campanya_add_dominio_run.jsp");
+		JspParser parser = new JspParser(path);
+		parser.run();
+	}
 
 	@Test
 	public void recognizeImportDirective() throws FileNotFoundException {

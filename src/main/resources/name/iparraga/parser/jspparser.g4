@@ -5,13 +5,12 @@ Helper helper = new Helper();
 }
 
 jspFile : 
-	(directive | scriptlet)* WS? EOF
+	.*? (directive | scriptlet | xmlEntity)* WS? EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
 directive 
-	: importDirective 
-	| otherDirective
+	: (importDirective | otherDirective)
 	{helper.debug("match directive" + $directive.text);}
 	;
 
@@ -19,7 +18,7 @@ importDirective : importOpen '"' importDeclaration '"' (WS|ANY)* DIRECTIVE_CLOSE
 	{helper.addImport($importDeclaration.text);} 
 	;
 	
-otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE;
+otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE WS?;
 
 importOpen : DIRECTIVE_OPEN WS? 'page' WS 'import' WS? '=' WS?;
 importDeclaration
@@ -27,10 +26,15 @@ importDeclaration
     ; 
 
 scriptlet 
-	: SCRIPTLET_OPEN code=.*? DIRECTIVE_CLOSE
+	: SCRIPTLET_OPEN .*? DIRECTIVE_CLOSE WS?
 	{helper.addCode($scriptlet.text);}
 	;
-
+	
+xmlEntity
+	: '<' .*? '/>' WS?
+	{helper.debug("match xmlEntity: " + $xmlEntity.text);}
+	;
+	
 qualifiedName
     :   Identifier ('.' Identifier)*
     ;
