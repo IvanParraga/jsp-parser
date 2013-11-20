@@ -17,8 +17,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandLineRunner {
+	private static Logger logger = LoggerFactory.getLogger(CommandLineRunner.class);
+
 	private final static String INPUT_FILE = "i";
 	private final static String OUTPUT_BASE_DIR = "o";
 	private final static String PACKAGE = "p";
@@ -111,6 +115,7 @@ public class CommandLineRunner {
 
 	private static Path getFileOutputPath(
 			Configuration config, MainClass mainClass) {
+
 		return Paths.get(
 				config.outputDirectory + File.separator +
 				packageToFilePath(config.package_) + File.separator +
@@ -124,13 +129,15 @@ public class CommandLineRunner {
 
 	private static void writeFile(Path path, String code)
 			throws IOException {
+		logger.info("Writing file: " + path);
+
 		final byte[] bytes = code.getBytes(Charset.forName("UTF8"));
 		Files.createDirectories(path.getParent());
 		Files.write(path, bytes);
 	}
 
 	private static String packageToFilePath(String package_) {
-		return package_.replaceAll(".", File.separator);
+		return package_.replaceAll("\\.", File.separator);
 	}
 
 	private static class Configuration {
@@ -138,5 +145,12 @@ public class CommandLineRunner {
 		String outputDirectory;
 		String package_;
 		boolean includeJsp;
+
+		@Override
+		public String toString() {
+			return "Configuration [inputFile=" + inputFile
+					+ ", outputDirectory=" + outputDirectory + ", package_="
+					+ package_ + ", includeJsp=" + includeJsp + "]";
+		}
 	}
 }
