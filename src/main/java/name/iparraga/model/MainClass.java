@@ -15,8 +15,11 @@ public class MainClass {
 		"import java.io.StringWriter;\n" +
 		"import java.io.Writer;\n" +
 		"import javax.ejb.Stateless;\n" +
+		"import javax.servlet.http.HttpServletRequest;\n" +
+		"import javax.servlet.http.HttpSession;\n" +
 		"import javax.ws.rs.GET;\n" +
-		"import javax.ws.rs.Path;\n";
+		"import javax.ws.rs.Path;\n" +
+		"import javax.ws.rs.core.Context;\n";
 
 	private final String package_;
 	private final String className;
@@ -116,7 +119,10 @@ public class MainClass {
 
 	private void writeDoRunMethodBegining() {
 		code.append("\t@GET\n");
-		code.append("\tpublic String doRun() throws IOException {\n");
+		code.append("\tpublic String doRun(\n");
+		code.append("\t\t\t@Context HttpServletRequest request,\n");
+		code.append("\t\t\t@Context HttpSession session");
+		code.append(") throws IOException {\n");
 		code.append("\t\tWriter out = new StringWriter();\n");
 	}
 
