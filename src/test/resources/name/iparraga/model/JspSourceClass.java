@@ -17,10 +17,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 @Stateless
 @Path("/test.jsp")
-public class EmptyClass {
+public class JspSourceClass {
 	@GET
 	public String doRun() throws IOException {
 		Writer out = new StringWriter();
 		return out.toString();
 	}
 }
+/*
+Original JSP code as follows:
+---- ---- ----
+<% // original code %>
+---- ---- ----
+*/

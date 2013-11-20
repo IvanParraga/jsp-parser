@@ -21,7 +21,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<mainClass>name.iparraga.parser.JspParser</mainClass>
+							<mainClass>name.iparraga.parser.CommandLineRunner</mainClass>
 							<!-- Optional -->
 							<onejarVersion>0.97</onejarVersion>
 							<!-- Optional, default is false -->
@@ -122,6 +122,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.testng</groupId>

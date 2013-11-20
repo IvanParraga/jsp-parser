@@ -17,9 +17,10 @@ public class MainClassTest {
 	public void generateEmptyClass() throws IOException {
 		String package_ = "com.test";
 		String className = "EmptyClass";
-		String source = "/test.jsp";
+		String apiPath = "/test.jsp";
+		String jspSourcePath = "modules/war/jsp/tests.jsp";
 
-		MainClass emptyClass = new MainClass(package_, className, source);
+		MainClass emptyClass = new MainClass(package_, className, apiPath, jspSourcePath);
 
 		String expectedCode = readClassFile(className);
 		String actualCode = emptyClass.toCode();
@@ -31,13 +32,30 @@ public class MainClassTest {
 	public void generateCodeClass() throws IOException {
 		String package_ = "com.test";
 		String className = "CodeClass";
-		String source = "/test.jsp";
+		String apiPath = "/test.jsp";
+		String jspSourcePath = "modules/war/jsp/tests.jsp";
 
-		MainClass codeClass = new MainClass(package_, className, source);
+		MainClass codeClass = new MainClass(package_, className, apiPath, jspSourcePath);
 		codeClass.addCode(new Code("	// some intereting code"));
 		String actualCode = codeClass.toCode();
 
 		String expectedCode = readClassFile(className);
+		assertEquals(actualCode, expectedCode);
+	}
+
+	@Test
+	public void generateCodeWithSource() throws IOException {
+		String package_ = "com.test";
+		String className = "JspSourceClass";
+		String apiPath = "/test.jsp";
+		String jspSourcePath = "modules/war/jsp/tests.jsp";
+
+		MainClass jspSourceClass = new MainClass(package_, className, apiPath, jspSourcePath);
+		jspSourceClass.addSourceJsp("<% // original code %>");
+
+		String expectedCode = readClassFile(className);
+		String actualCode = jspSourceClass.toCode();
+
 		assertEquals(actualCode, expectedCode);
 	}
 

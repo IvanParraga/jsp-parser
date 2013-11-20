@@ -20,35 +20,55 @@ public class MainClass {
 
 	private final String package_;
 	private final String className;
-	private final String source;
+	private final String apiPath;
+	private final String jspSourcePath;
+	private String sourceJspCode;
 
 	private StringBuilder code;
 
+	public MainClass(String package_, String className,
+			String apiPath, String jspSourcePath) {
 
-
-	public MainClass(String package_, String className, String sourceJsp) {
 		this.package_ = package_;
 		this.className = className;
-		this.source = sourceJsp;
+		this.apiPath = apiPath;
+		this.jspSourcePath = jspSourcePath;
 	}
 
 	public String toCode() {
 		code = new StringBuilder();
+		writeMetadata();
 		writePackage();
 		writeStandardImports();
 		writeAddedImports();
 		writeCodeFromTokens();
 		writeTags();
 		writeClassBody();
+		writeSourceJspCodeIfPresent();
 
 		return code.toString();
 	}
 
-	private StringBuilder writePackage() {
+	private void writeMetadata() {
+		code.append(
+			"/*\n" +
+			" * This class was automatically generated when transforming PPI to a JEE app\n" +
+			" * on November 2013.\n" +
+			" * \n" +
+			" * The code of the generator can be found at:\n" +
+			" * https://github.com/ivanator/jsp-parser\n" +
+			" * \n" +
+			" * Class derived from this source JSP:\n" +
+			" * ");
+
+		code.append(jspSourcePath);
+		code.append("\n */\n");
+	}
+
+	private void writePackage() {
 		code.append("package ");
 		code.append(package_);
 		code.append(";\n");
-		return code;
 	}
 
 	private void writeStandardImports() {
@@ -70,7 +90,7 @@ public class MainClass {
 	private void writeTags() {
 		code.append("@Stateless\n");
 		code.append("@Path(\"");
-		code.append(source);
+		code.append(apiPath);
 		code.append("\")\n");
 	}
 
@@ -113,6 +133,14 @@ public class MainClass {
 		code.append("}");
 	}
 
+	private void writeSourceJspCodeIfPresent() {
+		if (sourceJspCode != null) {
+			code.append("\n/*\nOriginal JSP code as follows:\n---- ---- ----\n");
+			code.append(sourceJspCode);
+			code.append("\n---- ---- ----\n*/");
+		}
+	}
+
 	public void add(ClassToken token) {
 		tokens.add(token);
 	}
@@ -144,5 +172,9 @@ public class MainClass {
 
 	public void addCode(Code code) {
 		codes.add(code);
+	}
+
+	public void addSourceJsp(String sourceJspCode) {
+		this.sourceJspCode = sourceJspCode;
 	}
 }

@@ -11,13 +11,12 @@ public class Helper {
 	private static final Logger logger = LoggerFactory.getLogger(Helper.class);
 	private final MainClass class_;
 
-	public Helper() {
-		class_ = new MainClass("foo","foo","foo");
+	public Helper(MainClass mainClass) {
+		class_ = mainClass;
 	}
 
 	public void addComment(String comment) {
 		logger.debug("adding comment " + comment);
-//		class_.add(new Comment(comment));
 	}
 
 	public void addImport(String import_) {

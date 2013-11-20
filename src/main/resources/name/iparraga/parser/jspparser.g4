@@ -1,7 +1,12 @@
 grammar jspparser;
 
-@members {
-Helper helper = new Helper();
+@parser::members {
+Helper helper;
+
+public jspparserParser(TokenStream input, Helper helper) {
+	this(input);
+	this.helper = helper;
+}
 }
 
 jspFile : 

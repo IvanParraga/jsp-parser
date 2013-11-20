@@ -1,7 +1,7 @@
 package name.iparraga.parser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -29,18 +29,54 @@ public class JspParser implements ANTLRErrorListener {
 	private final List<SyntacticProblem> errors = new ArrayList<>();
 
 	private final Reader input;
+	private final String filePath;
+	private final String package_;
+	private final String apiPath;
+	private final String className;
+	private final MainClass mainClass;
 
-	public JspParser(String filePath) throws FileNotFoundException {
-		input = new FileReader(filePath);
+	public JspParser(Reader contentToParse, String filePath, String package_)
+			throws FileNotFoundException {
+
+		input = contentToParse;
+		this.filePath = filePath;
+		this.package_ = package_;
+		apiPath = calculateJspName();
+		className = calculateClassName();
+		mainClass = createMainClass();
 	}
+
+	private String calculateJspName() {
+		int lastIndexSeparator = filePath.lastIndexOf(File.separator);
+		if (lastIndexSeparator == -1) {
+			return "/" + filePath;
+		} else {
+			return "/" + filePath.substring(lastIndexSeparator + 1);
+		}
+	}
+
+	private String calculateClassName() {
+		int extensionBeginning = apiPath.lastIndexOf('.');
+		return apiPath.substring(1, extensionBeginning);
+	}
+
+	private MainClass createMainClass() {
+		MainClass mainClass = new MainClass(
+				package_, className, apiPath, filePath);
+
+		return mainClass;
+	}
+
+
 
 	public MainClass run() {
 		ANTLRInputStream antlrStream;
 		try {
 			antlrStream = new ANTLRInputStream(input);
 			jspparserLexer lexer = new jspparserLexer(antlrStream);
-			jspparserParser parser = new jspparserParser(new BufferedTokenStream(
-					lexer));
+			Helper helper = new Helper(mainClass);
+			BufferedTokenStream tokensStream = new BufferedTokenStream(lexer);
+			jspparserParser parser = new jspparserParser(tokensStream, helper);
 			parser.addErrorListener(this);
 			parser.jspFile();
 
@@ -101,11 +137,5 @@ public class JspParser implements ANTLRErrorListener {
 			return "SyntacticProblem [line=" + line + ", charPositionInLine="
 					+ charPositionInLine + ", msg=" + msg + "]";
 		}
-	}
-
-	public static void main(String[] args) throws FileNotFoundException {
-		JspParser parser = new JspParser(args[0]);
-		MainClass class_ = parser.run();
-		System.out.print(class_.toCode());
 	}
 }
