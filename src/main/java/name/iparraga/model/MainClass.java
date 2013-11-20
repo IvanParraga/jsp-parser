@@ -66,9 +66,11 @@ public class MainClass {
 	}
 
 	private void writePackage() {
-		code.append("package ");
-		code.append(package_);
-		code.append(";\n");
+		if (!"".equalsIgnoreCase(package_)) {
+			code.append("package ");
+			code.append(package_);
+			code.append(";\n");
+		}
 	}
 
 	private void writeStandardImports() {
@@ -176,5 +178,9 @@ public class MainClass {
 
 	public void addSourceJsp(String sourceJspCode) {
 		this.sourceJspCode = sourceJspCode;
+	}
+
+	public String getClassName() {
+		return className;
 	}
 }

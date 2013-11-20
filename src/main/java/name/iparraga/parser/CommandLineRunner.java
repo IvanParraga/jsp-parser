@@ -1,7 +1,13 @@
 package name.iparraga.parser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import name.iparraga.model.MainClass;
 
@@ -18,7 +24,7 @@ public class CommandLineRunner {
 	private final static String PACKAGE = "p";
 	private final static String INCLUDE_JSP = "n";
 
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException {
 		Options options = createOptions();
 		CommandLine commandLine = null;
 		try {
@@ -29,11 +35,16 @@ public class CommandLineRunner {
 		checkOptions(commandLine, options);
 		Configuration configuration = getOptions(commandLine);
 
-		JspParser parser = new JspParser(
-				new FileReader(configuration.inputFile),
-				configuration.inputFile, configuration.package_);
-		MainClass class_ = parser.run();
-		System.out.print(class_.toCode());
+		MainClass mainClass = executeParser(configuration);
+
+		if (configuration.includeJsp) {
+			Path filePath = Paths.get(configuration.inputFile);
+			mainClass.addSourceJsp(getFileContent(filePath));
+		}
+
+		String code = mainClass.toCode();
+		Path fileOutputPath = getFileOutputPath(configuration, mainClass);
+		writeFile(fileOutputPath, code);
 	}
 
 	private static Options createOptions() {
@@ -81,17 +92,50 @@ public class CommandLineRunner {
 		Configuration config = new Configuration();
 
 		config.inputFile = commandLine.getOptionValue(INPUT_FILE);
-		config.outputFile = commandLine.getOptionValue(OUTPUT_BASE_DIR);
-		config.package_ = commandLine.getOptionValue(INPUT_FILE, "");
-		String includeJsp = commandLine.getOptionValue(INCLUDE_JSP, "false");
+		config.outputDirectory = commandLine.getOptionValue(OUTPUT_BASE_DIR);
+		config.package_ = commandLine.getOptionValue(PACKAGE, "");
+		String includeJsp = commandLine.getOptionValue(INCLUDE_JSP, "true");
 		config.includeJsp = includeJsp.equalsIgnoreCase("true");
 
 		return config;
 	}
 
+	private static MainClass executeParser(Configuration configuration)
+			throws FileNotFoundException {
+
+		JspParser parser = new JspParser(
+				new FileReader(configuration.inputFile),
+				configuration.inputFile, configuration.package_);
+		return parser.run();
+	}
+
+	private static Path getFileOutputPath(
+			Configuration config, MainClass mainClass) {
+		return Paths.get(
+				config.outputDirectory + File.separator +
+				packageToFilePath(config.package_) + File.separator +
+				mainClass.getClassName() + ".java");
+	}
+
+	private static String getFileContent(Path path) throws IOException {
+		final byte[] bytes = Files.readAllBytes(path);
+		return new String(bytes, Charset.forName("UTF8"));
+	}
+
+	private static void writeFile(Path path, String code)
+			throws IOException {
+		final byte[] bytes = code.getBytes(Charset.forName("UTF8"));
+		Files.createDirectories(path.getParent());
+		Files.write(path, bytes);
+	}
+
+	private static String packageToFilePath(String package_) {
+		return package_.replaceAll(".", File.separator);
+	}
+
 	private static class Configuration {
 		String inputFile;
-		String outputFile;
+		String outputDirectory;
 		String package_;
 		boolean includeJsp;
 	}

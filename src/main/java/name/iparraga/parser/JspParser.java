@@ -57,7 +57,25 @@ public class JspParser implements ANTLRErrorListener {
 
 	private String calculateClassName() {
 		int extensionBeginning = apiPath.lastIndexOf('.');
-		return apiPath.substring(1, extensionBeginning);
+		String classNameFromFile = apiPath.substring(1, extensionBeginning);
+		return camelizeClassname(classNameFromFile);
+	}
+
+	private String camelizeClassname(String notCamelizedClassName) {
+		if (!notCamelizedClassName.contains("_")) {
+			return notCamelizedClassName;
+		}
+
+		String[] parts = notCamelizedClassName.split("_");
+		String camelCaseString = "";
+		for (String part : parts) {
+			camelCaseString = camelCaseString + toProperCase(part);
+		}
+		return camelCaseString;
+	}
+
+	static String toProperCase(String s) {
+		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
 
 	private MainClass createMainClass() {
