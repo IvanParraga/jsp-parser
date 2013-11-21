@@ -35,10 +35,15 @@ public class MainClass {
 	public MainClass(String package_, String className,
 			String apiPath, String jspSourcePath) {
 
+		if (apiPath.startsWith("/")) {
+			this.apiPath = apiPath;
+		} else {
+			this.apiPath = "/" + apiPath;
+		}
+
+		this.jspSourcePath = jspSourcePath;
 		this.package_ = package_;
 		this.className = className;
-		this.apiPath = apiPath;
-		this.jspSourcePath = jspSourcePath;
 	}
 
 	public String toCode() {
