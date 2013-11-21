@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MainClass {
-	private final List<ClassToken> tokens = new LinkedList<>();
+	private final List<Comment> comments = new LinkedList<>();
 
 	private final List<Import> imports = new LinkedList<>();
 
@@ -45,7 +45,7 @@ public class MainClass {
 		writePackage();
 		writeStandardImports();
 		writeAddedImports();
-		writeCodeFromTokens();
+		writeComments();
 		writeTags();
 		writeClassBody();
 		writeSourceJspCodeIfPresent();
@@ -69,6 +69,12 @@ public class MainClass {
 		code.append("\n */\n");
 	}
 
+	private void writeComments() {
+		for (Comment import_ : comments) {
+			import_.toCode(code);
+		}
+	}
+
 	private void writePackage() {
 		if (!"".equalsIgnoreCase(package_)) {
 			code.append("package ");
@@ -84,12 +90,6 @@ public class MainClass {
 	private void writeAddedImports() {
 		for (Import import_ : imports) {
 			import_.toCode(code);
-		}
-	}
-
-	private void writeCodeFromTokens() {
-		for (ClassToken token : tokens) {
-			token.toCode(code);
 		}
 	}
 
@@ -151,9 +151,6 @@ public class MainClass {
 		}
 	}
 
-	public void add(ClassToken token) {
-		tokens.add(token);
-	}
 
 	public void addImport(Import import_) {
 		imports.add(import_);
@@ -190,5 +187,9 @@ public class MainClass {
 
 	public String getClassName() {
 		return className;
+	}
+
+	public void addComment(Comment comment) {
+		comments.add(comment);
 	}
 }
