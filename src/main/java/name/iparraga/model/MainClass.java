@@ -5,20 +5,19 @@ import java.util.List;
 
 public class MainClass {
 	private final List<Comment> comments = new LinkedList<>();
-
 	private final List<Import> imports = new LinkedList<>();
-
 	private final List<Code> codes = new LinkedList<>();
-
 	private final List<Declaration> declarations = new LinkedList<>();
 
 	private static final String STANDARD_IMPORTS =
-		"import java.io.IOException;\n" +
 		"import java.io.StringWriter;\n" +
+		"import java.io.PrintWriter;\n" +
 		"import java.io.Writer;\n" +
 		"import javax.ejb.Stateless;\n" +
 		"import javax.servlet.http.HttpServletRequest;\n" +
+		"import javax.servlet.http.HttpServletResponse;\n" +
 		"import javax.servlet.http.HttpSession;\n" +
+		"import javax.servlet.jsp.PageContext;\n" +
 		"import javax.ws.rs.GET;\n" +
 		"import javax.ws.rs.Path;\n" +
 		"import javax.ws.rs.Produces;\n" +
@@ -53,7 +52,6 @@ public class MainClass {
 		writeStandardImports();
 		writeAddedImports();
 		writeComments();
-		writeDeclarations();
 		writeTags();
 		writeClassBody();
 		writeSourceJspCodeIfPresent();
@@ -117,6 +115,7 @@ public class MainClass {
 	private void writeClassBody() {
 		writeClassStart();
 		writeDoRunMethod();
+		writeDeclarations();
 		writeClassEnd();
 	}
 
@@ -136,20 +135,23 @@ public class MainClass {
 		code.append("\t@GET\n");
 		code.append("\t@Produces(\"application/json; charset=UTF-8\")\n");
 		code.append("\tpublic String doRun(\n");
+		code.append("\t\t\t@Context PageContext pageContext,\n");
 		code.append("\t\t\t@Context HttpServletRequest request,\n");
+		code.append("\t\t\t@Context HttpServletResponse response,\n");
 		code.append("\t\t\t@Context HttpSession session");
-		code.append(") throws IOException {\n");
-		code.append("\t\tWriter out = new StringWriter();\n");
+		code.append(") throws Exception {\n");
+		code.append("\t\tWriter stringOut = new StringWriter();\n");
+		code.append("\t\tPrintWriter out = new PrintWriter(stringOut);\n");
 	}
 
 	private void writeCodes() {
-		for (ClassToken token : codes) {
+		for (Code token : codes) {
 			token.toCode(code);
 		}
 	}
 
 	private void writeDoRunMethodEnding() {
-		code.append("\t\treturn out.toString();\n");
+		code.append("\t\treturn stringOut.toString();\n");
 		code.append("\t}\n");
 	}
 

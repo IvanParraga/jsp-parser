@@ -96,7 +96,7 @@ public class CommandLineRunner {
 	}
 
 	private static String createActualPackage(Path relativePath, String package_) {
-		String pathToPackage = relativePath.toString().replaceAll("////", ".");
+		String pathToPackage = relativePath.toString().replaceAll("/", ".");
 		if ("".equalsIgnoreCase(package_)) {
 			return pathToPackage;
 		}

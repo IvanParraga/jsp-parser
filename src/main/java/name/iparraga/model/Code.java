@@ -11,7 +11,11 @@ public class Code extends ClassToken {
 
 	@Override
 	public void toCode(StringBuilder code) {
-		code.append(this.code);
+		code.append(processCode());
 		code.append("\n");
+	}
+
+	private String processCode() {
+		return code.replaceAll("return;", "return stringOut.toString();");
 	}
 }
