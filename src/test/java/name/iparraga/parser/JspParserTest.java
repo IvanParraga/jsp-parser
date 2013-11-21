@@ -16,16 +16,19 @@ public class JspParserTest {
 	@Test
 	public void run() throws FileNotFoundException {
 		String path = getPath("campanya_add_dominio_run.jsp");
-		JspParser parser = new JspParser(getFileContent(path), path, "");
+		JspParser parser = new JspParser(getFileContent(path), path, "", "/thing.jsp");
 		parser.run();
+	}
+
+	private JspParser getParser(String jspName) throws FileNotFoundException {
+		String path = getPath(jspName + ".jsp");
+		return new JspParser(getFileContent(path), path, "foo", "/" + jspName + ".jsp");
 	}
 
 	@Test
 	public void recognizeImportDirective() throws FileNotFoundException {
 		String jspName = "LanguageDirective";
-		String package_ = "foo";
-		String path = getPath(jspName + ".jsp");
-		JspParser parser = new JspParser(getFileContent(path), path, package_);
+		JspParser parser = getParser(jspName);
 
 		MainClass actualMainClass = parser.run();
 
@@ -38,9 +41,7 @@ public class JspParserTest {
 	@Test
 	public void ignoreOtherDirectives() throws FileNotFoundException {
 		String jspName = "OtherDirectives";
-		String package_ = "foo";
-		String path = getPath(jspName + ".jsp");
-		JspParser parser = new JspParser(getFileContent(path), path, package_);
+		JspParser parser = getParser(jspName);
 
 		MainClass actualMainClass = parser.run();
 
@@ -52,9 +53,7 @@ public class JspParserTest {
 	@Test
 	public void scriptlet() throws FileNotFoundException {
 		String jspName = "Scriptlet";
-		String package_ = "foo";
-		String path = getPath("Scriptlet.jsp");
-		JspParser parser = new JspParser(getFileContent(path), path,package_);
+		JspParser parser = getParser(jspName);
 
 		MainClass actualMainClass = parser.run();
 

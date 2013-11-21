@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import name.iparraga.model.MainClass;
 
@@ -17,18 +18,20 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommandLineRunner {
 	private static Logger logger = LoggerFactory.getLogger(CommandLineRunner.class);
 
-	private final static String INPUT_FILE = "i";
 	private final static String OUTPUT_BASE_DIR = "o";
 	private final static String PACKAGE = "p";
 	private final static String INCLUDE_JSP = "n";
+	private static final String INPUT_BASE_DIR = "i";
 
 	public static void main(String[] args) throws IOException {
+
 		Options options = createOptions();
 		CommandLine commandLine = null;
 		try {
@@ -37,50 +40,115 @@ public class CommandLineRunner {
 			gentlyExit(options);
 		}
 		checkOptions(commandLine, options);
-		Configuration configuration = getOptions(commandLine);
+		Configuration configuration = createConfiguration(commandLine);
 
-		MainClass mainClass = executeParser(configuration);
+		long initialTimeStamp = System.currentTimeMillis();
+		for (String inputFile : configuration.inputFiles) {
+			Path pathFromBaseDir = null;
+			try {
+				pathFromBaseDir =
+						getPathRelativeToBaseDir(configuration.inputBaseDir, inputFile);
+			} catch (IllegalArgumentException e) {
+				logger.error(
+						"Ignoring " + inputFile + " because has no base dir "
+						+ configuration.inputBaseDir);
 
-		if (configuration.includeJsp) {
-			Path filePath = Paths.get(configuration.inputFile);
-			mainClass.addSourceJsp(getFileContent(filePath));
+				continue;
+			}
+
+			Path pathDirectoryFromBaseDir = pathFromBaseDir.getParent();
+
+			String actualPackage = createActualPackage(pathDirectoryFromBaseDir, configuration.package_);
+
+			long iterationTimeStamp = System.currentTimeMillis();
+			MainClass mainClass = executeParser(inputFile, actualPackage, pathFromBaseDir);
+
+			if (configuration.includeJsp) {
+				Path filePath = Paths.get(inputFile);
+				mainClass.addSourceJsp(getFileContent(filePath));
+			}
+
+			String code = mainClass.toCode();
+			Path fileOutputPath = getFileOutputPath(
+					configuration.outputDirectory, actualPackage, mainClass);
+
+			writeFile(fileOutputPath, code);
+
+			logMetrics(initialTimeStamp, iterationTimeStamp, inputFile, fileOutputPath);
+		}
+	}
+
+	private static void logMetrics(long initialTimeStamp, long iterationTimeStamp,
+			String inputFile, Path outputFile) {
+		long now = System.currentTimeMillis();
+
+		long timeFromStart = now - initialTimeStamp;
+		String timeFromStartStr =
+				DurationFormatUtils.formatDurationHMS(timeFromStart);
+
+		long timeIteration = now - iterationTimeStamp;
+		String timeIterationStr =
+				DurationFormatUtils.formatDurationHMS(timeIteration);
+
+		logger.info(
+				inputFile + '\t' + outputFile + '\t'
+				+ timeIterationStr + '\t' + timeFromStartStr);
+	}
+
+	private static String createActualPackage(Path relativePath, String package_) {
+		String pathToPackage = relativePath.toString().replaceAll("////", ".");
+		if ("".equalsIgnoreCase(package_)) {
+			return pathToPackage;
+		}
+		return package_ + "." + pathToPackage;
+	}
+
+	private static Path getPathRelativeToBaseDir(String inputBaseDirStr,
+			String inputFilePathStr) {
+		Path inputBaseDir = Paths.get(inputBaseDirStr);
+		Path inputFilePath = Paths.get(inputFilePathStr);
+
+		if (!inputFilePath.startsWith(inputBaseDir)) {
+			throw new IllegalArgumentException();
 		}
 
-		String code = mainClass.toCode();
-		Path fileOutputPath = getFileOutputPath(configuration, mainClass);
-		writeFile(fileOutputPath, code);
+		return inputFilePath.subpath(
+				inputBaseDir.getNameCount(),inputFilePath.getNameCount());
 	}
 
 	private static Options createOptions() {
 		Options options = new Options();
 
-		options.addOption(
-			createOption(INPUT_FILE, "input-file", "the JSP input file"));
-
-		options.addOption(
-			createOption(
+		Option outputOption = createOption(
 				OUTPUT_BASE_DIR, "output-dir",
-				"the output directory where the class will be generated"));
+				"the output directory where the class will be generated");
+		outputOption.setRequired(true);
+		options.addOption(outputOption);
 
 		options.addOption(createOption(
-			PACKAGE, "package", "the package where to place the generated file"));
+			PACKAGE, "package", "the base package where to place the generated file"));
 
 		options.addOption(createOption(
 			INCLUDE_JSP, "include-jsp",
 			"if true, the generated file will include original file as a comment"));
+
+		Option inputBaseDir = createOption(
+				INPUT_BASE_DIR, "input-base-dir",
+				"generated classes' package will be relative to this path");
+		inputBaseDir.setRequired(true);
+		options.addOption(inputBaseDir);
 
 		return options;
 	}
 
 	private static Option createOption(String shortName, String longName,
 			String argDescription) {
-		return new Option(shortName, longName, true, argDescription);
+		Option option = new Option(shortName, longName, true, argDescription);
+		return option;
 	}
 
 	private static void checkOptions(CommandLine commandLine, Options options) {
-		if (
-				!commandLine.hasOption(INPUT_FILE)
-				|| !commandLine.hasOption(OUTPUT_BASE_DIR)) {
+		if (!commandLine.hasOption(OUTPUT_BASE_DIR)) {
 			System.err.println("Invalid properties");
 			gentlyExit(options);
 		}
@@ -88,14 +156,23 @@ public class CommandLineRunner {
 
 	private static void gentlyExit(Options options) {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp( "java -jar JavaParser.jar", options);
+		String commandLineSyntax = createCommandLineSyntax();
+		formatter.printHelp(commandLineSyntax, options);
+
 		System.exit(-1);
 	}
 
-	private static Configuration getOptions(CommandLine commandLine) {
+	private static String createCommandLineSyntax() {
+		return "java -jar JavaParser.jar <files-to-parse> -i <arg> -o <arg> -p <arg>";
+	}
+
+	private static Configuration createConfiguration(CommandLine commandLine) {
 		Configuration config = new Configuration();
 
-		config.inputFile = commandLine.getOptionValue(INPUT_FILE);
+		config.inputBaseDir =
+				commandLine.getOptionValue(CommandLineRunner.INPUT_BASE_DIR);
+
+		config.inputFiles = commandLine.getArgs();
 		config.outputDirectory = commandLine.getOptionValue(OUTPUT_BASE_DIR);
 		config.package_ = commandLine.getOptionValue(PACKAGE, "");
 		String includeJsp = commandLine.getOptionValue(INCLUDE_JSP, "true");
@@ -104,21 +181,23 @@ public class CommandLineRunner {
 		return config;
 	}
 
-	private static MainClass executeParser(Configuration configuration)
+	private static MainClass executeParser(String inputFile, String package_, Path apiPath)
 			throws FileNotFoundException {
 
 		JspParser parser = new JspParser(
-				new FileReader(configuration.inputFile),
-				configuration.inputFile, configuration.package_);
+				new FileReader(inputFile),
+				inputFile,
+				package_,
+				apiPath.toString());
 		return parser.run();
 	}
 
 	private static Path getFileOutputPath(
-			Configuration config, MainClass mainClass) {
+			String outputDirectory, String actualPackage, MainClass mainClass) {
 
 		return Paths.get(
-				config.outputDirectory + File.separator +
-				packageToFilePath(config.package_) + File.separator +
+				outputDirectory + File.separator +
+				packageToFilePath(actualPackage) + File.separator +
 				mainClass.getClassName() + ".java");
 	}
 
@@ -129,8 +208,6 @@ public class CommandLineRunner {
 
 	private static void writeFile(Path path, String code)
 			throws IOException {
-		logger.info("Writing file: " + path);
-
 		final byte[] bytes = code.getBytes(Charset.forName("UTF8"));
 		Files.createDirectories(path.getParent());
 		Files.write(path, bytes);
@@ -141,14 +218,16 @@ public class CommandLineRunner {
 	}
 
 	private static class Configuration {
-		String inputFile;
+		String inputBaseDir;
+		String[] inputFiles;
 		String outputDirectory;
 		String package_;
 		boolean includeJsp;
 
 		@Override
 		public String toString() {
-			return "Configuration [inputFile=" + inputFile
+			return "Configuration [inputBaseDir=" + inputBaseDir
+					+ ", inputFiles=" + Arrays.toString(inputFiles)
 					+ ", outputDirectory=" + outputDirectory + ", package_="
 					+ package_ + ", includeJsp=" + includeJsp + "]";
 		}

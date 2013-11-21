@@ -35,13 +35,13 @@ public class JspParser implements ANTLRErrorListener {
 	private final String className;
 	private final MainClass mainClass;
 
-	public JspParser(Reader contentToParse, String filePath, String package_)
+	public JspParser(Reader contentToParse, String filePath, String package_, String apiPath)
 			throws FileNotFoundException {
 
 		input = contentToParse;
 		this.filePath = filePath;
 		this.package_ = package_;
-		apiPath = calculateJspName();
+		this.apiPath = apiPath;
 		className = calculateClassName();
 		mainClass = createMainClass();
 	}
@@ -57,7 +57,9 @@ public class JspParser implements ANTLRErrorListener {
 
 	private String calculateClassName() {
 		int extensionBeginning = apiPath.lastIndexOf('.');
-		String classNameFromFile = apiPath.substring(1, extensionBeginning);
+		String classNameFromFile = apiPath.substring(0, extensionBeginning);
+		int fileBegining = classNameFromFile.lastIndexOf('/');
+		classNameFromFile = classNameFromFile.substring(fileBegining + 1);
 		return camelizeClassname(classNameFromFile);
 	}
 

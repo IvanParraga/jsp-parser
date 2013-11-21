@@ -22,11 +22,8 @@
 					<execution>
 						<configuration>
 							<mainClass>name.iparraga.parser.CommandLineRunner</mainClass>
-							<!-- Optional -->
 							<onejarVersion>0.97</onejarVersion>
-							<!-- Optional, default is false -->
 							<attachToBuild>true</attachToBuild>
-							<!-- Optional, default is "onejar" -->
 							<classifier>onejar</classifier>
 						</configuration>
 						<goals>
@@ -103,6 +100,11 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
