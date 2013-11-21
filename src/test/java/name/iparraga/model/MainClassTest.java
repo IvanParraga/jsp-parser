@@ -51,7 +51,7 @@ public class MainClassTest {
 		String jspSourcePath = "modules/war/jsp/tests.jsp";
 
 		MainClass jspSourceClass = new MainClass(package_, className, apiPath, jspSourcePath);
-		jspSourceClass.addSourceJsp("<% // original code %>");
+		jspSourceClass.addSourceJsp("<% /* original code */ %>");
 
 		String expectedCode = readClassFile(className);
 		String actualCode = jspSourceClass.toCode();
