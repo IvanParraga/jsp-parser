@@ -10,6 +10,8 @@ public class MainClass {
 
 	private final List<Code> codes = new LinkedList<>();
 
+	private final List<Declaration> declarations = new LinkedList<>();
+
 	private static final String STANDARD_IMPORTS =
 		"import java.io.IOException;\n" +
 		"import java.io.StringWriter;\n" +
@@ -46,6 +48,7 @@ public class MainClass {
 		writeStandardImports();
 		writeAddedImports();
 		writeComments();
+		writeDeclarations();
 		writeTags();
 		writeClassBody();
 		writeSourceJspCodeIfPresent();
@@ -70,8 +73,14 @@ public class MainClass {
 	}
 
 	private void writeComments() {
-		for (Comment import_ : comments) {
-			import_.toCode(code);
+		for (Comment comment : comments) {
+			comment.toCode(code);
+		}
+	}
+
+	private void writeDeclarations() {
+		for (Declaration declaration : declarations) {
+			declaration.toCode(code);
 		}
 	}
 
@@ -191,5 +200,9 @@ public class MainClass {
 
 	public void addComment(Comment comment) {
 		comments.add(comment);
+	}
+
+	public void addDeclaration(Declaration declaration) {
+		declarations.add(declaration);
 	}
 }

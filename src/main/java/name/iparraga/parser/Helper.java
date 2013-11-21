@@ -2,6 +2,7 @@ package name.iparraga.parser;
 
 import name.iparraga.model.Code;
 import name.iparraga.model.Comment;
+import name.iparraga.model.Declaration;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class Helper {
 	private static final Logger logger = LoggerFactory.getLogger(Helper.class);
 	private final MainClass class_;
-	private final boolean startCode = false;
+	private boolean startCode = false;
 
 	public Helper(MainClass mainClass) {
 		class_ = mainClass;
@@ -19,7 +20,7 @@ public class Helper {
 
 	public void addComment(String comment) {
 		logger.debug("adding comment " + comment);
-		String commentCode = comment.replace("<%--", "").replace("--%>","");
+		String commentCode = comment.replace("<%--", "").replace("--%>","").trim();
 		commentCode = "/*\n" + commentCode + "\n*/";
 
 		if (startCode) {
@@ -27,6 +28,13 @@ public class Helper {
 		} else {
 			class_.addComment(new Comment(commentCode));
 		}
+	}
+
+	public void addDeclaration(String declaration) {
+		logger.debug("adding declaration " + declaration);
+		String declarationCode = declaration.replace("<%!", "").replace("%>","").trim();
+
+		class_.addDeclaration(new Declaration(declarationCode));
 	}
 
 
@@ -37,6 +45,7 @@ public class Helper {
 
 	public void addCode(String code) {
 		logger.debug("adding code " + code);
+		startCode = true;
 		class_.addCode(new Code(code.replace("<%", "").replace("%>","")));
 	}
 

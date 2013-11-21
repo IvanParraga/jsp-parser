@@ -10,7 +10,7 @@ public jspparserParser(TokenStream input, Helper helper) {
 }
 
 jspFile : 
-	.*? (directive | comment | scriptlet | xmlEntity)* WS? EOF
+	.*? (directive | comment | scriptlet | declaration | xmlEntity)* WS? EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
@@ -39,6 +39,11 @@ comment
 	: COMMENT_OPEN .*? COMMENT_CLOSE WS?
 	{helper.addComment($comment.text);}
 	;	
+	
+declaration
+	: DECLARATION_OPEN .*? DIRECTIVE_CLOSE WS?
+	{helper.addDeclaration($declaration.text);}
+	;
 	
 xmlEntity
 	: '<' .*? '/>' WS?
@@ -77,6 +82,7 @@ JavaLetterOrDigit
 
 DIRECTIVE_OPEN : '<%@'; 
 DIRECTIVE_CLOSE : '%>';
+DECLARATION_OPEN : '<%!';
 SCRIPTLET_OPEN : '<%'; 
 COMMENT_OPEN : '<%--';
 COMMENT_CLOSE : '--%>';
