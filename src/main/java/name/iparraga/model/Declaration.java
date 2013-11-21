@@ -9,7 +9,11 @@ public class Declaration extends ClassToken {
 
 	@Override
 	public void toCode(StringBuilder code) {
-		code.append(declarationCode);
+		code.append(computeCode());
 		code.append("\n");
+	}
+
+	private String computeCode() {
+		return declarationCode.replaceAll("ServletResponse", "HttpServletResponse");
 	}
 }
