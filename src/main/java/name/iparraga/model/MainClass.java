@@ -24,7 +24,7 @@ public class MainClass {
 		"import javax.ws.rs.core.Context;\n";
 
 	private final String package_;
-	private final String className;
+	private String className;
 	private final String apiPath;
 	private final String jspSourcePath;
 	private String sourceJspCode;
@@ -229,6 +229,10 @@ public class MainClass {
 		return className;
 	}
 
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
 	public void addComment(Comment comment) {
 		comments.add(comment);
 	}
@@ -244,4 +248,5 @@ public class MainClass {
 	public void setEjbName(String ejbName) {
 		this.ejbName = ejbName;
 	}
+
 }

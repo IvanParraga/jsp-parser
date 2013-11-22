@@ -34,6 +34,7 @@ public class JspParser implements ANTLRErrorListener {
 	private final String apiPath;
 	private final String className;
 	private final MainClass mainClass;
+	private final String ejbName;
 
 	public JspParser(Reader contentToParse, String filePath, String package_, String apiPath)
 			throws FileNotFoundException {
@@ -43,6 +44,7 @@ public class JspParser implements ANTLRErrorListener {
 		this.package_ = package_;
 		this.apiPath = apiPath;
 		className = calculateClassName();
+		ejbName = package_ + "-" + className;
 		mainClass = createMainClass();
 	}
 
@@ -104,7 +106,6 @@ public class JspParser implements ANTLRErrorListener {
 				throw new RuntimeException(
 					"Problems parsing! " + Arrays.toString(errors.toArray()));
 			}
-
 			return parser.helper.getMainClass();
 		} catch (IOException e) {
 			throw new RuntimeException(e);

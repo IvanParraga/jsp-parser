@@ -57,16 +57,15 @@ public class CommandLineRunner {
 			}
 
 			Path pathDirectoryFromBaseDir = pathFromBaseDir.getParent();
-
-			String actualPackage = createActualPackage(pathDirectoryFromBaseDir, configuration.package_);
+			String actualPackage = createActualPackage(
+					pathDirectoryFromBaseDir, configuration.package_);
 
 			long iterationTimeStamp = System.currentTimeMillis();
-			MainClass mainClass = executeParser(inputFile, actualPackage, pathFromBaseDir);
 
-			if (configuration.includeJsp) {
-				Path filePath = Paths.get(inputFile);
-				mainClass.addSourceJsp(getFileContent(filePath));
-			}
+			MainClass mainClass = parse(
+					inputFile, actualPackage, pathFromBaseDir);
+
+			postParsingAdjustments(configuration, inputFile, mainClass);
 
 			String code = mainClass.toCode();
 			Path fileOutputPath = getFileOutputPath(
@@ -74,7 +73,24 @@ public class CommandLineRunner {
 
 			writeFile(fileOutputPath, code);
 
-			logMetrics(initialTimeStamp, iterationTimeStamp, inputFile, fileOutputPath);
+			logMetrics(
+				initialTimeStamp, iterationTimeStamp, inputFile, fileOutputPath);
+		}
+	}
+
+	private static void postParsingAdjustments(Configuration configuration,
+			String inputFile, MainClass mainClass) throws IOException {
+		Path filePath = Paths.get(inputFile);
+
+		if (configuration.includeJsp) {
+			mainClass.addSourceJsp(getFileContent(filePath));
+		}
+
+		if (inputFile.contains("ubicacion_create_run.jsp")) {
+			Path parent = filePath.getParent();
+			String ubication = parent.getName(parent.getNameCount() - 1).toString();
+			String newClassName = mainClass.getClassName() + ubication;
+			mainClass.setClassName(newClassName);
 		}
 	}
 
@@ -181,7 +197,8 @@ public class CommandLineRunner {
 		return config;
 	}
 
-	private static MainClass executeParser(String inputFile, String package_, Path apiPath)
+	private static MainClass parse(
+			String inputFile, String package_, Path apiPath)
 			throws FileNotFoundException {
 
 		JspParser parser = new JspParser(
