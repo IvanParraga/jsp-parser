@@ -28,6 +28,7 @@ public class MainClass {
 	private final String apiPath;
 	private final String jspSourcePath;
 	private String sourceJspCode;
+	private String ejbName;
 
 	private StringBuilder code;
 
@@ -52,7 +53,7 @@ public class MainClass {
 		writeStandardImports();
 		writeAddedImports();
 		writeComments();
-		writeTags();
+		writeClassAnnotations();
 		writeClassBody();
 		writeSourceJspCodeIfPresent();
 
@@ -105,8 +106,22 @@ public class MainClass {
 		}
 	}
 
-	private void writeTags() {
-		code.append("@Stateless\n");
+	private void writeClassAnnotations() {
+		writeStatelesAnnotation();
+		writePathAnnotation();
+	}
+
+	private void writeStatelesAnnotation() {
+		code.append("@Stateless");
+		if (ejbName != null) {
+			code.append("(name=\"");
+			code.append(ejbName);
+			code.append("\")");
+		}
+		code.append("\n");
+	}
+
+	private void writePathAnnotation() {
 		code.append("@Path(\"");
 		code.append(apiPath);
 		code.append("\")\n");
@@ -220,5 +235,13 @@ public class MainClass {
 
 	public void addDeclaration(Declaration declaration) {
 		declarations.add(declaration);
+	}
+
+	public String getEjbName() {
+		return ejbName;
+	}
+
+	public void setEjbName(String ejbName) {
+		this.ejbName = ejbName;
 	}
 }

@@ -37,6 +37,7 @@ public class MainClassTest {
 
 		MainClass codeClass = new MainClass(package_, className, apiPath, jspSourcePath);
 		codeClass.addCode(new Code("	// some intereting code"));
+		codeClass.setEjbName("SuperCode");
 		String actualCode = codeClass.toCode();
 
 		String expectedCode = readClassFile(className);
