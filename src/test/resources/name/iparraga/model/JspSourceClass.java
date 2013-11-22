@@ -9,12 +9,14 @@
  * modules/war/jsp/tests.jsp
  */
 package com.test;
-import java.io.IOException;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.PageContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,10 +27,13 @@ public class JspSourceClass {
 	@GET
 	@Produces("application/json; charset=UTF-8")
 	public String doRun(
+			@Context PageContext pageContext,
 			@Context HttpServletRequest request,
-			@Context HttpSession session) throws IOException {
-		Writer out = new StringWriter();
-		return out.toString();
+			@Context HttpServletResponse response,
+			@Context HttpSession session) throws Exception {
+		Writer stringOut = new StringWriter();
+		PrintWriter out = new PrintWriter(stringOut);
+		return stringOut.toString();
 	}
 }
 /*
