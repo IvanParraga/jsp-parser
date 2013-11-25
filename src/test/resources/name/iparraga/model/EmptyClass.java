@@ -29,8 +29,8 @@ public class EmptyClass {
 	public String doRun(
 			@Context PageContext pageContext,
 			@Context HttpServletRequest request,
-			@Context HttpServletResponse response,
-			@Context HttpSession session) throws Exception {
+			@Context HttpServletResponse response) throws Exception {
+		HttpSession session = request.getSession(false);
 		Writer stringOut = new StringWriter();
 		PrintWriter out = new PrintWriter(stringOut);
 		return stringOut.toString();
