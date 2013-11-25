@@ -9,6 +9,7 @@ import java.io.Reader;
 import name.iparraga.model.Code;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
+import name.iparraga.model.ScopeVariable;
 
 import org.testng.annotations.Test;
 
@@ -59,6 +60,20 @@ public class JspParserTest {
 
 		MainClass expectedMainClass = getExpectedClass(jspName);
 		expectedMainClass.addCode(new Code("// some intereting code"));
+		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
+	}
+
+	@Test
+	public void attributeSet() throws FileNotFoundException {
+		String jspName = "AttributeSet";
+		JspParser parser = getParser(jspName);
+
+		MainClass actualMainClass = parser.run();
+
+		MainClass expectedMainClass = getExpectedClass(jspName);
+		expectedMainClass.addScopeVariable(new ScopeVariable("key1","var1","request"));
+		expectedMainClass.addScopeVariable(new ScopeVariable("key2","var2","request"));
+		expectedMainClass.addScopeVariable(new ScopeVariable("key3","var3","session"));
 		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
 	}
 

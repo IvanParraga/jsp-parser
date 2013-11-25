@@ -8,6 +8,7 @@ public class MainClass {
 	private final List<Import> imports = new LinkedList<>();
 	private final List<Code> codes = new LinkedList<>();
 	private final List<Declaration> declarations = new LinkedList<>();
+	private final List<ScopeVariable> scopeVariables = new LinkedList<>();
 
 	private static final String STANDARD_IMPORTS =
 		"import java.io.StringWriter;\n" +
@@ -142,6 +143,7 @@ public class MainClass {
 
 	private void writeDoRunMethod() {
 		writeDoRunMethodBegining();
+		writeScopeVariables();
 		writeCodes();
 		writeDoRunMethodEnding();
 	}
@@ -156,6 +158,12 @@ public class MainClass {
 		code.append("\t\tHttpSession session = request.getSession(false);\n");
 		code.append("\t\tWriter stringOut = new StringWriter();\n");
 		code.append("\t\tPrintWriter out = new PrintWriter(stringOut);\n");
+	}
+
+	private void writeScopeVariables() {
+		for (ScopeVariable token : scopeVariables) {
+			token.toCode(code);
+		}
 	}
 
 	private void writeCodes() {
@@ -246,6 +254,10 @@ public class MainClass {
 
 	public void setEjbName(String ejbName) {
 		this.ejbName = ejbName;
+	}
+
+	public void addScopeVariable(ScopeVariable scopeVariable) {
+		this.scopeVariables.add(scopeVariable);
 	}
 
 }

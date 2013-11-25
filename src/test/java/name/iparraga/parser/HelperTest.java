@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 public class HelperTest {
 	@Test
-	public void addCode_noNewLine() {
+	public void addCode_removePageContextNoNewLine() {
 		MainClass mainClassMock = Mockito.mock(MainClass.class);
 
 		String code = "<% System.exit();\nPageContextFactory.setPageContext(pageContext); %>";
@@ -19,7 +19,7 @@ public class HelperTest {
 	}
 
 	@Test
-	public void addCode_newLine() {
+	public void addCode_removePageContextNewLine() {
 		MainClass mainClassMock = Mockito.mock(MainClass.class);
 
 		String code = "<% System.exit();\nPageContextFactory.setPageContext(pageContext);\n %>";
@@ -27,5 +27,23 @@ public class HelperTest {
 		helper.addCode(code);
 
 		Mockito.verify(mainClassMock).addCode(new Code(" System.exit();\n "));
+	}
+
+	@Test
+	public void addCode_replacePageContextByRequestContext() {
+		MainClass mainClassMock = Mockito.mock(MainClass.class);
+
+		String code =
+			"<% System.exit();\n"
+			+ "PageContextFactory.setPageContext(pageContext);\n"
+			+ "pageContext.getAttribute(\"a\");\n"
+			+ " %>";
+		Helper helper = new Helper(mainClassMock);
+		helper.addCode(code);
+
+		String expectedCode =
+				" System.exit();\n"
+				+ "request.getAttribute(\"a\");\n ";
+		Mockito.verify(mainClassMock).addCode(new Code(expectedCode));
 	}
 }
