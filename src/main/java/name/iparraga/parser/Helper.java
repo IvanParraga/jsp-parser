@@ -46,7 +46,15 @@ public class Helper {
 	public void addCode(String code) {
 		logger.debug("adding code " + code);
 		startCode = true;
-		class_.addCode(new Code(code.replace("<%", "").replace("%>","")));
+		code = code.replace("<%", "").replace("%>","");
+		code = removePageSessionReferences(code);
+		class_.addCode(new Code(code));
+	}
+
+	private String removePageSessionReferences(String code) {
+		code = code.replaceAll(
+			"PageContextFactory.setPageContext\\(pageContext\\);(\n)?", "");
+		return code;
 	}
 
 	public void debug(String msg) {
