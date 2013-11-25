@@ -78,7 +78,6 @@ public class JspParserTest {
 		String apiPath = getPath(jspName + ".jsp");
 
 		MainClass mainClass =  new MainClass("foo", className, apiUrl, apiPath);
-		mainClass.setEjbName("foo-" + className);
 
 		return mainClass;
 	}
