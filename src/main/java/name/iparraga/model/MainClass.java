@@ -150,7 +150,6 @@ public class MainClass {
 		code.append("\t@GET\n");
 		code.append("\t@Produces(\"application/json; charset=UTF-8\")\n");
 		code.append("\tpublic String doRun(\n");
-		code.append("\t\t\t@Context PageContext pageContext,\n");
 		code.append("\t\t\t@Context HttpServletRequest request,\n");
 		code.append("\t\t\t@Context HttpServletResponse response");
 		code.append(") throws Exception {\n");

@@ -27,7 +27,6 @@ public class CodeClass {
 	@GET
 	@Produces("application/json; charset=UTF-8")
 	public String doRun(
-			@Context PageContext pageContext,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession(false);
