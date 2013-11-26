@@ -95,7 +95,7 @@ public class JspParser implements ANTLRErrorListener {
 		ANTLRInputStream antlrStream;
 		try {
 			antlrStream = new ANTLRInputStream(input);
-			jspparserLexer lexer = new jspparserLexer(antlrStream);
+			jsplexer lexer = new jsplexer(antlrStream);
 			Helper helper = new Helper(mainClass);
 			BufferedTokenStream tokensStream = new BufferedTokenStream(lexer);
 			jspparserParser parser = new jspparserParser(tokensStream, helper);

@@ -39,6 +39,7 @@
 				<version>${antlr.version}</version>
 				<configuration>
 					<sourceDirectory>src/main/resources</sourceDirectory>
+					<libDirectory>src/main/resources/name/iparraga/parser</libDirectory>					
 				</configuration>
 				<executions>
 					<execution>
