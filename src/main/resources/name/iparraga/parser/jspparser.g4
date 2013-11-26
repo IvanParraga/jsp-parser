@@ -33,7 +33,7 @@ importDeclaration
     ; 
 
 scriptlet 
-	: SCRIPTLET_OPEN .*? DIRECTIVE_CLOSE WS?
+	: SCRIPTLET_OPEN .*? SCRIPTLET_CLOSE WS?
 	{helper.addCode($scriptlet.text);}
 	;
 	
