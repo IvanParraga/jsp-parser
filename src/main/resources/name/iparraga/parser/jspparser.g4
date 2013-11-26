@@ -10,7 +10,7 @@ public jspparserParser(TokenStream input, Helper helper) {
 }
 
 jspFile : 
-	.*? (directive | comment | scriptlet | declaration | xmlEntity)* WS? EOF
+	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity)* WS? EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
@@ -19,8 +19,8 @@ directive
 	{helper.debug("match directive" + $directive.text);}
 	;
 
-importDirective : importOpen '"' importDeclaration '"' (WS|ANY)* DIRECTIVE_CLOSE WS?
-	{helper.addImport($importDeclaration.text);} 
+importDirective : importOpen QUOTED_CONTENT WS? DIRECTIVE_CLOSE WS?
+	{helper.addImport($QUOTED_CONTENT.text);} 
 	;
 	
 otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE WS?;
@@ -43,6 +43,21 @@ comment
 declaration
 	: DECLARATION_OPEN .*? DIRECTIVE_CLOSE WS?
 	{helper.addDeclaration($declaration.text);}
+	;
+
+scopeVar
+	locals [
+		java.util.Map<String, String> scopeVarMap = new java.util.HashMap<>();
+	]
+	: '<fmt:message' WS? (scopePair)+ '/>' WS?	
+	{helper.addScopeVar($scopeVarMap);}
+	;
+	
+scopePair
+	: Identifier WS? '=' WS? QUOTED_CONTENT WS?
+	{
+		$scopeVar::scopeVarMap.put($Identifier.text, $QUOTED_CONTENT.text);
+	}
 	;
 	
 xmlEntity
@@ -79,7 +94,7 @@ JavaLetterOrDigit
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
         {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
     ;
-
+QUOTED_CONTENT : '"' ~[\r\n"]*? '"';
 DIRECTIVE_OPEN : '<%@'; 
 DIRECTIVE_CLOSE : '%>';
 DECLARATION_OPEN : '<%!';

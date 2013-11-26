@@ -44,7 +44,7 @@ public class Helper {
 
 	public void addImport(String import_) {
 		logger.debug("adding import " + import_);
-		class_.addImport(new Import(import_));
+		class_.addImport(new Import(unquote(import_)));
 	}
 
 	public void addCode(String code) {
@@ -57,11 +57,16 @@ public class Helper {
 
 	public void addScopeVar(Map<String,String> var) {
 		logger.debug("adding scope var " + var);
-		String key = var.get("key");
-		String value = var.get("value");
-		String scope = var.get("scope");
+		String key = unquote(var.get("key"));
+		String value = unquote(var.get("var"));
+		String scope = unquote(var.get("scope"));
 		ScopeVariable variable = new ScopeVariable(key, value, scope);
 		class_.addScopeVariable(variable);
+	}
+
+	private String unquote(String quotedString) {
+		quotedString = quotedString.substring(1);
+		return quotedString.substring(0, quotedString.length() - 1);
 	}
 
 	private String changePageContextToServletContext(String code) {
