@@ -5,6 +5,7 @@ import java.util.Map;
 import name.iparraga.model.Code;
 import name.iparraga.model.Comment;
 import name.iparraga.model.Declaration;
+import name.iparraga.model.HtmlCode;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 import name.iparraga.model.ScopeVariable;
@@ -77,9 +78,15 @@ public class Helper {
 		return code;
 	}
 
+	public void addHtml(String content) {
+		HtmlCode code = new HtmlCode(content);
+		class_.addHtml(code);
+	}
+
 	public void debug(String msg) {
 		logger.debug("-->" + msg + "<--");
 	}
+
 
 	public MainClass getMainClass() {
 		return class_;

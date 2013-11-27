@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.Reader;
 
 import name.iparraga.model.Code;
+import name.iparraga.model.HtmlCode;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
 import name.iparraga.model.ScopeVariable;
@@ -60,6 +61,20 @@ public class JspParserTest {
 
 		MainClass expectedMainClass = getExpectedClass(jspName);
 		expectedMainClass.addCode(new Code("// some intereting code"));
+		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
+	}
+
+	@Test
+	public void html() throws FileNotFoundException {
+		String jspName = "Html";
+		JspParser parser = getParser(jspName);
+
+		MainClass actualMainClass = parser.run();
+
+		MainClass expectedMainClass = getExpectedClass(jspName);
+		expectedMainClass.addCode(new HtmlCode("<html>"));
+		expectedMainClass.addCode(new Code(" // some intereting code "));
+		expectedMainClass.addCode(new HtmlCode("</html>"));
 		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
 	}
 

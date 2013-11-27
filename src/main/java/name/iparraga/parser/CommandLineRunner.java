@@ -206,7 +206,11 @@ public class CommandLineRunner {
 				inputFile,
 				package_,
 				apiPath.toString());
-		return parser.run();
+		try {
+			return parser.run();
+		} catch (Exception e) {
+			throw new RuntimeException("Problems parsing " + inputFile, e);
+		}
 	}
 
 	private static Path getFileOutputPath(

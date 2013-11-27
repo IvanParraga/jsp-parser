@@ -2,6 +2,7 @@ grammar jspparser;
 options {tokenVocab=jsplexer;}
 
 @parser::members {
+
 Helper helper;
 
 public jspparserParser(TokenStream input, Helper helper) {
@@ -12,7 +13,7 @@ public jspparserParser(TokenStream input, Helper helper) {
 
 
 jspFile : 
-	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity)* WS? EOF
+	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity | other)* EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
@@ -65,6 +66,11 @@ scopePair
 xmlEntity
 	: XML_OPEN .*? XML_CLOSE WS?
 	{helper.debug("match xmlEntity: " + $xmlEntity.text);}
+	;
+	
+other 
+	: OTHER
+	{helper.addHtml($OTHER.text);}
 	;
 	
 qualifiedName

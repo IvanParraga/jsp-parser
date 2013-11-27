@@ -1,19 +1,23 @@
 lexer grammar jsplexer;
 
-PAGE : 'page';
+@lexer::members {
+boolean inJsp = false;
+}
 
-EQUAL : '=';
+PAGE : 'page' {inJsp}?;
 
-IMPORT : 'import';
+EQUAL : '=' {inJsp}?;
 
-STATIC : 'static';
+IMPORT : 'import' {inJsp}?;
 
-DOT : '.';
+STATIC : 'static' {inJsp}?;
 
-STAR : '*';
+DOT : '.' {inJsp}?;
+
+STAR : '*' {inJsp}?;
 
 Identifier
-    :   JavaLetter JavaLetterOrDigit*
+    :   JavaLetter JavaLetterOrDigit* {inJsp}?
     ;
 
 fragment
@@ -37,17 +41,18 @@ JavaLetterOrDigit
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
         {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
     ;
-QUOTED_CONTENT : '"' ~[\r\n"]*? '"';
-XML_OPEN : '<';
-XML_CLOSE : '/>';
-SCOPE_VAR_OPEN : '<fmt:message';
-DIRECTIVE_OPEN : '<%@'; 
-DIRECTIVE_CLOSE : '%>';
-DECLARATION_OPEN : '<%!';
-SCRIPTLET_OPEN : '<%' -> pushMode(ScriptletMode); 
-COMMENT_OPEN : '<%--';
-COMMENT_CLOSE : '--%>';
-WS  :  [ \t\r\n\u000C]+;
+QUOTED_CONTENT : '"' ~[\r\n"]*? '"' {inJsp}?;
+XML_OPEN : '<fmt:' {!inJsp}? {inJsp=true;};
+XML_CLOSE : '/>' {inJsp}? {inJsp=false;};
+SCOPE_VAR_OPEN : '<fmt:message' {!inJsp}? {inJsp=true;};
+DIRECTIVE_OPEN : '<%@' {!inJsp}? {inJsp=true;}; 
+DIRECTIVE_CLOSE : '%>' {inJsp}? {inJsp=false;};
+DECLARATION_OPEN : '<%!' {!inJsp}? {inJsp=true;};
+SCRIPTLET_OPEN : '<%' {!inJsp}? -> pushMode(ScriptletMode);  
+COMMENT_OPEN : '<%--' {!inJsp}? {inJsp=true;};
+COMMENT_CLOSE : '--%>' {inJsp}? {inJsp=false;};
+WS  :  [ \t\r\n\u000C]+ {inJsp}?;
+OTHER : .+?;
 
 mode ScriptletMode;
 ANY: .;

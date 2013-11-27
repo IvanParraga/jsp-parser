@@ -5,7 +5,7 @@ package name.iparraga.model;
  *
  */
 public class Code extends ClassToken {
-	private final String code;
+	protected String code;
 
 
 	public Code(String code) {

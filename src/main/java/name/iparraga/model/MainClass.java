@@ -6,7 +6,7 @@ import java.util.List;
 public class MainClass {
 	private final List<Comment> comments = new LinkedList<>();
 	private final List<Import> imports = new LinkedList<>();
-	private final List<Code> codes = new LinkedList<>();
+	private final LinkedList<Code> codes = new LinkedList<>();
 	private final List<Declaration> declarations = new LinkedList<>();
 	private final List<ScopeVariable> scopeVariables = new LinkedList<>();
 
@@ -258,6 +258,15 @@ public class MainClass {
 
 	public void addScopeVariable(ScopeVariable scopeVariable) {
 		this.scopeVariables.add(scopeVariable);
+	}
+
+	public void addHtml(HtmlCode code) {
+		Code lastCode = codes.peekLast();
+		if (lastCode instanceof HtmlCode) {
+			((HtmlCode)lastCode).appendCode(code.code);
+		} else {
+			codes.add(code);
+		}
 	}
 
 }
