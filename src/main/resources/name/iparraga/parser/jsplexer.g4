@@ -16,8 +16,8 @@ DOT : '.' {inJsp}?;
 
 STAR : '*' {inJsp}?;
 
-Identifier
-    :   JavaLetter JavaLetterOrDigit* {inJsp}?
+Identifier 
+    :   JavaLetter JavaLetterOrDigit* {inJsp}? 
     ;
 
 fragment
@@ -48,12 +48,10 @@ SCOPE_VAR_OPEN : '<fmt:message' {!inJsp}? {inJsp=true;};
 DIRECTIVE_OPEN : '<%@' {!inJsp}? {inJsp=true;}; 
 DIRECTIVE_CLOSE : '%>' {inJsp}? {inJsp=false;};
 DECLARATION_OPEN : '<%!' {!inJsp}? {inJsp=true;};
-SCRIPTLET_OPEN : '<%' {!inJsp}? -> pushMode(ScriptletMode);  
+EXPRESSION_OPEN : '<%=' {!inJsp}? {inJsp=true;};
 COMMENT_OPEN : '<%--' {!inJsp}? {inJsp=true;};
 COMMENT_CLOSE : '--%>' {inJsp}? {inJsp=false;};
+SCRIPTLET_OPEN : '<%' {!inJsp}? {inJsp=true;};
 WS  :  [ \t\r\n\u000C]+ {inJsp}?;
-OTHER : .+?;
-
-mode ScriptletMode;
-ANY: .;
-SCRIPTLET_CLOSE : '%>' -> popMode;
+OTHER : .+? {!inJsp}?;
+OTHER_IN_JSP : .+? {inJsp}?;

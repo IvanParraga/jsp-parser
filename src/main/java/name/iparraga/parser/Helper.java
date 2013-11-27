@@ -5,6 +5,7 @@ import java.util.Map;
 import name.iparraga.model.Code;
 import name.iparraga.model.Comment;
 import name.iparraga.model.Declaration;
+import name.iparraga.model.ExpressionCode;
 import name.iparraga.model.HtmlCode;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
@@ -81,6 +82,11 @@ public class Helper {
 	public void addHtml(String content) {
 		HtmlCode code = new HtmlCode(content);
 		class_.addHtml(code);
+	}
+
+	public void addExpression(String content) {
+		ExpressionCode code = new ExpressionCode(content.replace("<%=", "").replace("%>", ""));
+		class_.addCode(code);
 	}
 
 	public void debug(String msg) {

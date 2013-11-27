@@ -30,6 +30,9 @@ public class CommandLineRunner {
 	private final static String INCLUDE_JSP = "n";
 	private static final String INPUT_BASE_DIR = "i";
 
+	private static Configuration configuration;
+	private static long initialTimeStamp;
+
 	public static void main(String[] args) throws IOException {
 
 		Options options = createOptions();
@@ -40,9 +43,16 @@ public class CommandLineRunner {
 			gentlyExit(options);
 		}
 		checkOptions(commandLine, options);
-		Configuration configuration = createConfiguration(commandLine);
+		configuration = createConfiguration(commandLine);
 
-		long initialTimeStamp = System.currentTimeMillis();
+		initialTimeStamp = System.currentTimeMillis();
+
+		processInputFiles();
+
+		logger.info("executed with version 1");
+	}
+
+	private static void processInputFiles() throws IOException {
 		for (String inputFile : configuration.inputFiles) {
 			Path pathFromBaseDir = null;
 			try {

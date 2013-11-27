@@ -1,6 +1,5 @@
 package name.iparraga.parser;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,15 +47,6 @@ public class JspParser implements ANTLRErrorListener {
 		mainClass = createMainClass();
 	}
 
-	private String calculateJspName() {
-		int lastIndexSeparator = filePath.lastIndexOf(File.separator);
-		if (lastIndexSeparator == -1) {
-			return "/" + filePath;
-		} else {
-			return "/" + filePath.substring(lastIndexSeparator + 1);
-		}
-	}
-
 	private String calculateClassName() {
 		int extensionBeginning = apiPath.lastIndexOf('.');
 		String classNameFromFile = apiPath.substring(0, extensionBeginning);
@@ -78,7 +68,7 @@ public class JspParser implements ANTLRErrorListener {
 		return camelCaseString;
 	}
 
-	static String toProperCase(String s) {
+	private String toProperCase(String s) {
 		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
 
@@ -91,7 +81,7 @@ public class JspParser implements ANTLRErrorListener {
 
 
 
-	public MainClass run() {
+	public MainClass run() throws IOException {
 		ANTLRInputStream antlrStream;
 		try {
 			antlrStream = new ANTLRInputStream(input);
@@ -109,6 +99,8 @@ public class JspParser implements ANTLRErrorListener {
 			return parser.helper.getMainClass();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		} finally {
+			input.close();
 		}
 	}
 

@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 
 import name.iparraga.model.Code;
@@ -16,7 +17,7 @@ import org.testng.annotations.Test;
 
 public class JspParserTest {
 	@Test
-	public void run() throws FileNotFoundException {
+	public void run() throws IOException {
 		String path = getPath("campanya_add_dominio_run.jsp");
 		JspParser parser = new JspParser(getFileContent(path), path, "", "/thing.jsp");
 		parser.run();
@@ -28,7 +29,7 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void recognizeImportDirective() throws FileNotFoundException {
+	public void recognizeImportDirective() throws IOException {
 		String jspName = "LanguageDirective";
 		JspParser parser = getParser(jspName);
 
@@ -41,7 +42,7 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void ignoreOtherDirectives() throws FileNotFoundException {
+	public void ignoreOtherDirectives() throws IOException {
 		String jspName = "OtherDirectives";
 		JspParser parser = getParser(jspName);
 
@@ -53,7 +54,7 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void scriptlet() throws FileNotFoundException {
+	public void scriptlet() throws IOException {
 		String jspName = "Scriptlet";
 		JspParser parser = getParser(jspName);
 
@@ -65,7 +66,7 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void html() throws FileNotFoundException {
+	public void html() throws IOException {
 		String jspName = "Html";
 		JspParser parser = getParser(jspName);
 
@@ -79,7 +80,7 @@ public class JspParserTest {
 	}
 
 	@Test
-	public void attributeSet() throws FileNotFoundException {
+	public void attributeSet() throws IOException {
 		String jspName = "AttributeSet";
 		JspParser parser = getParser(jspName);
 

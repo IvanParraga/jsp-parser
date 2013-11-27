@@ -13,20 +13,26 @@ public jspparserParser(TokenStream input, Helper helper) {
 
 
 jspFile : 
-	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity | other)* EOF
+	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity | expression | other)* EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
 directive 
 	: (importDirective | otherDirective)
-	{helper.debug("match directive" + $directive.text);}
 	;
 
 importDirective : importOpen QUOTED_CONTENT WS? DIRECTIVE_CLOSE WS?
-	{helper.addImport($QUOTED_CONTENT.text);} 
+	{
+		helper.debug("match import" + $importDirective.text);
+		helper.addImport($QUOTED_CONTENT.text);
+	} 
 	;
 	
-otherDirective : DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE WS?;
+otherDirective 
+	: 
+	DIRECTIVE_OPEN .*? DIRECTIVE_CLOSE WS?
+	{helper.debug("match other directive" + $otherDirective.text);}
+	;
 
 importOpen : DIRECTIVE_OPEN WS? PAGE WS IMPORT WS? EQUAL WS?;
 importDeclaration
@@ -34,9 +40,14 @@ importDeclaration
     ; 
 
 scriptlet 
-	: SCRIPTLET_OPEN .*? SCRIPTLET_CLOSE WS?
+	: SCRIPTLET_OPEN .*? DIRECTIVE_CLOSE WS?
 	{helper.addCode($scriptlet.text);}
 	;
+	
+expression 
+	: EXPRESSION_OPEN .*? DIRECTIVE_CLOSE WS?
+	{helper.addExpression($expression.text);}
+	;	
 	
 comment
 	: COMMENT_OPEN .*? COMMENT_CLOSE WS?

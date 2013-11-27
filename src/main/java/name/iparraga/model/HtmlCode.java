@@ -16,8 +16,13 @@ public class HtmlCode extends Code {
 			return;
 		}
 
-		code.append("\t\tout.print(");
-		code.append(codeToWrite);
-		code.append(")\n");
+		code.append("\t\tout.print(\"");
+		String escapedCode = escapeCode(codeToWrite);
+		code.append(escapedCode);
+		code.append("\");\n");
+	}
+
+	private String escapeCode(String codeToWrite) {
+		return codeToWrite.replace("\"","\\\"").replace("\n", "\\n");
 	}
 }
