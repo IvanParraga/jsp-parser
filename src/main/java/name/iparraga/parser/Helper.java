@@ -68,8 +68,9 @@ public class Helper {
 
 	public void addBundleSet(Map<String,String> var) {
 		logger.debug("adding bundle set " + var);
+		addImport("\"java.util.ResourceBundle\"");
 		String basename = unquote(var.get("basename"));
-		SetBundle setBundle = new SetBundle(basename);
+		BundleSet setBundle = new BundleSet(basename);
 		class_.addBundle(setBundle);
 	}
 

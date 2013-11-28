@@ -87,7 +87,8 @@ public class JspParserTest {
 		MainClass actualMainClass = parser.run();
 
 		MainClass expectedMainClass = getExpectedClass(jspName);
-		expectedMainClass.addBundle(new SetBundle("locales.campanyas.campanyas_objetivos_create"));
+		expectedMainClass.addImport(new Import("java.util.ResourceBundle"));
+		expectedMainClass.addBundle(new BundleSet("locales.campanyas.campanyas_objetivos_create"));
 		expectedMainClass.addBundle(new BundleVariable("key1","var1","request"));
 		expectedMainClass.addBundle(new BundleVariable("key2","var2","request"));
 		expectedMainClass.addBundle(new BundleVariable("key3","var3","session"));

@@ -30,9 +30,9 @@ public class BundleVariable extends Bundle {
 
 		code.append("setAttribute(\"");
 		code.append(key);
-		code.append("\",\"");
+		code.append("\", bundle.getString(\"");
 		code.append(value);
-		code.append("\");\n");
+		code.append("\"));\n");
 	}
 
 }

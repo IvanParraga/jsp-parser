@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import name.iparraga.parser.BundleSet;
+
 import org.testng.annotations.Test;
 
 public class MainClassTest {
@@ -56,6 +58,27 @@ public class MainClassTest {
 
 		String expectedCode = readClassFile(className);
 		String actualCode = jspSourceClass.toCode();
+
+		assertEquals(actualCode, expectedCode);
+	}
+
+	@Test
+	public void generateCodeWithBundles() throws IOException {
+		String package_ = "com.test";
+		String className = "BundleClass";
+		String apiPath = "/test.jsp";
+		String jspSourcePath = "modules/war/jsp/tests.jsp";
+
+		MainClass bundleClass =
+				new MainClass(package_, className, apiPath, jspSourcePath);
+
+		String bundleFile = "file.bundle";
+		bundleClass.addImport(new Import("java.util.ResourceBundle"));
+		bundleClass.addBundle(new BundleSet(bundleFile));
+		bundleClass.addBundle(new BundleVariable("key", "value", "page"));
+
+		String expectedCode = readClassFile(className);
+		String actualCode = bundleClass.toCode();
 
 		assertEquals(actualCode, expectedCode);
 	}
