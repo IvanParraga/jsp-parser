@@ -7,11 +7,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import name.iparraga.model.BundleVariable;
 import name.iparraga.model.Code;
 import name.iparraga.model.HtmlCode;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
-import name.iparraga.model.ScopeVariable;
 
 import org.testng.annotations.Test;
 
@@ -87,9 +87,10 @@ public class JspParserTest {
 		MainClass actualMainClass = parser.run();
 
 		MainClass expectedMainClass = getExpectedClass(jspName);
-		expectedMainClass.addScopeVariable(new ScopeVariable("key1","var1","request"));
-		expectedMainClass.addScopeVariable(new ScopeVariable("key2","var2","request"));
-		expectedMainClass.addScopeVariable(new ScopeVariable("key3","var3","session"));
+		expectedMainClass.addBundle(new SetBundle("locales.campanyas.campanyas_objetivos_create"));
+		expectedMainClass.addBundle(new BundleVariable("key1","var1","request"));
+		expectedMainClass.addBundle(new BundleVariable("key2","var2","request"));
+		expectedMainClass.addBundle(new BundleVariable("key3","var3","session"));
 		assertEquals(actualMainClass.toCode(), expectedMainClass.toCode());
 	}
 

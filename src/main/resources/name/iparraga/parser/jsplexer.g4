@@ -42,9 +42,10 @@ JavaLetterOrDigit
         {Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
     ;
 QUOTED_CONTENT : '"' ~[\r\n"]*? '"' {inJsp}?;
-XML_OPEN : '<fmt:' {!inJsp}? {inJsp=true;};
+BUNDLE_VAR_OPEN : '<fmt:message' {!inJsp}? {inJsp=true;};
+BUNDLE_SET_OPEN : '<fmt:setBundle' {!inJsp}? {inJsp=true;};
+XML_OPEN : '<fmt:' {inJsp}? {inJsp=false;};
 XML_CLOSE : '/>' {inJsp}? {inJsp=false;};
-SCOPE_VAR_OPEN : '<fmt:message' {!inJsp}? {inJsp=true;};
 DIRECTIVE_OPEN : '<%@' {!inJsp}? {inJsp=true;}; 
 DIRECTIVE_CLOSE : '%>' {inJsp}? {inJsp=false;};
 DECLARATION_OPEN : '<%!' {!inJsp}? {inJsp=true;};

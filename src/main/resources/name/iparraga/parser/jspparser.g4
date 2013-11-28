@@ -13,7 +13,17 @@ public jspparserParser(TokenStream input, Helper helper) {
 
 
 jspFile : 
-	(directive | comment | scriptlet | declaration | scopeVar | xmlEntity | expression | other)* EOF
+	(
+	directive 
+	| comment 
+	| scriptlet 
+	| declaration 
+	| bundleSet 
+	| bundleVar
+	| xmlEntity 
+	| expression 
+	| other)* 
+	EOF
 	{helper.debug("jspFile " + $jspFile.text);}
 	;
 
@@ -59,20 +69,35 @@ declaration
 	{helper.addDeclaration($declaration.text);}
 	;
 
-scopeVar
+bundleSet
 	locals [
 		java.util.Map<String, String> scopeVarMap = new java.util.HashMap<>();
 	]
-	: SCOPE_VAR_OPEN WS? (scopePair)+ XML_CLOSE WS?	
-	{helper.addScopeVar($scopeVarMap);}
+	: BUNDLE_SET_OPEN WS? (scopePairBundleSet)+ XML_CLOSE WS?	
+	{helper.addBundleSet($scopeVarMap);}
+	;
+
+bundleVar
+	locals [
+		java.util.Map<String, String> scopeVarMap = new java.util.HashMap<>();
+	]
+	: BUNDLE_VAR_OPEN WS? (scopePairBundleVar)+ XML_CLOSE WS?	
+	{helper.addBundleVar($scopeVarMap);}
 	;
 	
-scopePair
+scopePairBundleVar
 	: Identifier WS? EQUAL WS? QUOTED_CONTENT WS?
 	{
-		$scopeVar::scopeVarMap.put($Identifier.text, $QUOTED_CONTENT.text);
+		$bundleVar::scopeVarMap.put($Identifier.text, $QUOTED_CONTENT.text);
 	}
 	;
+	
+scopePairBundleSet
+	: Identifier WS? EQUAL WS? QUOTED_CONTENT WS?
+	{
+		$bundleSet::scopeVarMap.put($Identifier.text, $QUOTED_CONTENT.text);
+	}
+	;	
 	
 xmlEntity
 	: XML_OPEN .*? XML_CLOSE WS?

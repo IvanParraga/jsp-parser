@@ -2,6 +2,7 @@ package name.iparraga.parser;
 
 import java.util.Map;
 
+import name.iparraga.model.BundleVariable;
 import name.iparraga.model.Code;
 import name.iparraga.model.Comment;
 import name.iparraga.model.Declaration;
@@ -9,7 +10,6 @@ import name.iparraga.model.ExpressionCode;
 import name.iparraga.model.HtmlCode;
 import name.iparraga.model.Import;
 import name.iparraga.model.MainClass;
-import name.iparraga.model.ScopeVariable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +57,20 @@ public class Helper {
 		class_.addCode(new Code(code));
 	}
 
-	public void addScopeVar(Map<String,String> var) {
-		logger.debug("adding scope var " + var);
+	public void addBundleVar(Map<String,String> var) {
+		logger.debug("adding bundle var " + var);
 		String key = unquote(var.get("key"));
 		String value = unquote(var.get("var"));
 		String scope = unquote(var.get("scope"));
-		ScopeVariable variable = new ScopeVariable(key, value, scope);
-		class_.addScopeVariable(variable);
+		BundleVariable variable = new BundleVariable(key, value, scope);
+		class_.addBundle(variable);
+	}
+
+	public void addBundleSet(Map<String,String> var) {
+		logger.debug("adding bundle set " + var);
+		String basename = unquote(var.get("basename"));
+		SetBundle setBundle = new SetBundle(basename);
+		class_.addBundle(setBundle);
 	}
 
 	private String unquote(String quotedString) {

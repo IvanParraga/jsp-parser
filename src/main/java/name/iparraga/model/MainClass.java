@@ -8,7 +8,7 @@ public class MainClass {
 	private final List<Import> imports = new LinkedList<>();
 	private final LinkedList<Code> codes = new LinkedList<>();
 	private final List<Declaration> declarations = new LinkedList<>();
-	private final List<ScopeVariable> scopeVariables = new LinkedList<>();
+	private final List<Bundle> scopeVariables = new LinkedList<>();
 
 	private static final String STANDARD_IMPORTS =
 		"import java.io.StringWriter;\n" +
@@ -161,7 +161,7 @@ public class MainClass {
 	}
 
 	private void writeScopeVariables() {
-		for (ScopeVariable token : scopeVariables) {
+		for (Bundle token : scopeVariables) {
 			token.toCode(code);
 		}
 	}
@@ -256,7 +256,7 @@ public class MainClass {
 		this.ejbName = ejbName;
 	}
 
-	public void addScopeVariable(ScopeVariable scopeVariable) {
+	public void addBundle(Bundle scopeVariable) {
 		this.scopeVariables.add(scopeVariable);
 	}
 
