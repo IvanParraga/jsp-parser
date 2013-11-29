@@ -37,7 +37,8 @@ public class JspSourceClass {
 	}
 }
 /*
-Original JSP code as follows (block comments replaced by: "START-COMMENT" and END-COMMENT):
+Original JSP code as follows
+(block comments replaced by: "START-COMMENT" and "END-COMMENT"):
 ---- ---- ----
 <% START-COMMENT original code END-COMMENT %>
 ---- ---- ----

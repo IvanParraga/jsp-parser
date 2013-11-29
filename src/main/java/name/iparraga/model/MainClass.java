@@ -184,9 +184,9 @@ public class MainClass {
 
 	private void writeSourceJspCodeIfPresent() {
 		if (sourceJspCode != null) {
-			code.append("\n/*\nOriginal JSP code as follows ");
+			code.append("\n/*\nOriginal JSP code as follows\n");
 			code.append("(block comments replaced by: \"START-COMMENT\" ");
-			code.append("and END-COMMENT):\n");
+			code.append("and \"END-COMMENT\"):\n");
 			code.append("---- ---- ----\n");
 			code.append(escapeComments(sourceJspCode));
 			code.append("\n---- ---- ----\n*/");
