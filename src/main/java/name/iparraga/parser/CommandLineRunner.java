@@ -211,11 +211,13 @@ public class CommandLineRunner {
 			String inputFile, String package_, Path apiPath)
 			throws FileNotFoundException {
 
+		String realApiPath = apiPath.toString().replace("_run.jsp", ".run");
+
 		JspParser parser = new JspParser(
 				new FileReader(inputFile),
 				inputFile,
 				package_,
-				apiPath.toString());
+				realApiPath);
 		try {
 			return parser.run();
 		} catch (Exception e) {

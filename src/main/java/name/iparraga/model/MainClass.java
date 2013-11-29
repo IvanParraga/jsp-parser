@@ -20,6 +20,7 @@ public class MainClass {
 		"import javax.servlet.http.HttpSession;\n" +
 		"import javax.servlet.jsp.PageContext;\n" +
 		"import javax.ws.rs.GET;\n" +
+		"import javax.ws.rs.POST;\n" +
 		"import javax.ws.rs.Path;\n" +
 		"import javax.ws.rs.Produces;\n" +
 		"import javax.ws.rs.core.Context;\n";
@@ -149,7 +150,7 @@ public class MainClass {
 	}
 
 	private void writeDoRunMethodBegining() {
-		code.append("\t@GET\n");
+		code.append("\t@GET @POST\n");
 		code.append("\t@Produces(\"application/json; charset=UTF-8\")\n");
 		code.append("\tpublic String doRun(\n");
 		code.append("\t\t\t@Context HttpServletRequest request,\n");

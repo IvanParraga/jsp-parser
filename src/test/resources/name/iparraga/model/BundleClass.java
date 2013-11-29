@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -25,7 +26,7 @@ import java.util.ResourceBundle;
 @Stateless
 @Path("/test.jsp")
 public class BundleClass {
-	@GET
+	@GET @POST
 	@Produces("application/json; charset=UTF-8")
 	public String doRun(
 			@Context HttpServletRequest request,
